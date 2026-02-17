@@ -1,9 +1,9 @@
 set(ENGINE_SOURCES
-  source/HelloWorld.cpp
+  source/Application.cpp
 )
 
 set(ENGINE_HEADERS
-  include/Engine/HelloWorld.h
+  include/Engine/Application.h
 )
 
 add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})

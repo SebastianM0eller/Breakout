@@ -1,3 +1,8 @@
-#include "Engine/HelloWorld.h"
+#include "Engine/Application.h"
 
-int main() { HelloWorld(); }
+int main() {
+        Engine::Application::ApplicationConfig config;
+        Engine::Application game{config};
+
+        game.Run();
+}
