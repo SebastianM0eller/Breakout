@@ -1,0 +1,7 @@
+CompileFlags:
+  CompilationDatabase: build/release
+
+  Remove: 
+      - -fmodules-ts
+      - -fmodule-mapper=*
+      - -fdeps-format=*

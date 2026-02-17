@@ -1,0 +1,8 @@
+# Build Folder
+build/
+
+# Symlink
+compile_commands.json
+
+# Cache
+.cache
