@@ -6,9 +6,13 @@ namespace Engine {
 
 class Application {
        public:
+        ///
+        /// Represents the configuration settings for the Application.
+        /// It is used to construct a new Application instance.
+        ///
         struct ApplicationConfig {
-                const char* ApplicationName{"Game"};
-                sf::Vector2f WindowSize{800, 600};
+                const char* WindowName{"Game"};
+                sf::Vector2f WindowViewSize{800, 600};
                 bool vsync{true};
         };
 
