@@ -1,9 +1,11 @@
 set(ENGINE_SOURCES
   source/Application.cpp
+  source/ResourceManager.cpp
 )
 
 set(ENGINE_HEADERS
   include/Engine/Application.h
+  include/Engine/ResourceManager.h
 )
 
 add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})
