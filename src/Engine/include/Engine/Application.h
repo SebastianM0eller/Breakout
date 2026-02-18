@@ -23,8 +23,7 @@ class Application {
         void Stop();
 
        private:
-        sf::RenderWindow m_Window;
+        sf::RenderWindow* m_Window;
         bool m_IsRunning;
 };
-
 }  // namespace Engine

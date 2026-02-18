@@ -6,6 +6,7 @@ set(ENGINE_SOURCES
 set(ENGINE_HEADERS
   include/Engine/Application.h
   include/Engine/ResourceManager.h
+  include/Engine/Renderer.h
 )
 
 add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})
