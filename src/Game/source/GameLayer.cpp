@@ -1,12 +1,15 @@
 #include "GameLayer.h"
 
+#include <iostream>
+
 #include "Engine/Renderer.h"
 #include "Engine/ResourceManager.h"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/Window/Keyboard.hpp"
 
-GameLayer::GameLayer()
-    : m_TestSprite(*Engine::ResourceManager::Get().Load<sf::Texture>("assets/TornadoPressure.png")) {}
+GameLayer::GameLayer() : m_TestSprite(*Engine::ResourceManager::Get().Load<sf::Texture>("assets/TornadoPressure.png")) {
+        std::cout << "The sprite has the scaling: " << m_TestSprite.getScale().x << m_TestSprite.getScale().y;
+}
 
 GameLayer::~GameLayer() { Engine::ResourceManager::Get().Remove<sf::Texture>("assets/TornadoPressure.png"); }
 

@@ -29,7 +29,7 @@ class Application {
 
         template <typename T>
                 requires(std::derived_from<T, Layer>)
-        void PushLayer(T) {
+        void PushLayer() {
                 m_LayerStack.push_back(std::make_unique<T>());
         }
 
