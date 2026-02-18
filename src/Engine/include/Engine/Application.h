@@ -22,7 +22,7 @@ class Application {
         };
 
         Application(const ApplicationConfig& config);
-        ~Application() = default;
+        ~Application();
 
         void Run();
         void Stop();

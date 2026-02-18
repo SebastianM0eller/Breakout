@@ -1,14 +1,11 @@
-#include <iostream>
+#include <Engine/Application.h>
 
-#include "Engine/ResourceManager.h"
+#include "GameLayer.h"
 
 int main() {
-        for (int i = 0; i < 5; i++) {
-                Engine::ResourceManager::Get().Load<sf::Texture>("assets/TornadoPressure.png");
-        }
+        Engine::Application::ApplicationConfig config;
+        Engine::Application game(config);
 
-        for (int i = 0; i < 8; i++) {
-                std::cout << "Iteration: " << i << "\n";
-                Engine::ResourceManager::Get().Remove<sf::Texture>("assets/TornadoPressure.png");
-        }
+        game.PushLayer(GameLayer());
+        game.Run();
 }
