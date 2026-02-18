@@ -6,8 +6,8 @@ class Layer {
        public:
         virtual ~Layer() = default;
 
-        virtual bool OnEvent([[maybe_unused]] sf::Event& event) { return false; }
-        virtual void OnUpdate([[maybe_unused]] float deltaTime) {}
+        virtual bool OnEvent([[maybe_unused]] const sf::Event& event) { return false; }
+        virtual void OnUpdate([[maybe_unused]] const float deltaTime) {}
         virtual void OnRender() {}
 };
 }  // namespace Engine

@@ -1,9 +1,11 @@
 #include "Engine/Application.h"
 
 #include <memory>
+#include <ranges>
 
 #include "Engine/Renderer.h"
 #include "SFML/System/Clock.hpp"
+#include "SFML/Window/Event.hpp"
 
 ///
 /// Creates a new Application instance based on the specified ApplicationConfig.
@@ -34,12 +36,7 @@ void Engine::Application::Run() {
         while (m_IsRunning) {
                 float deltaTime = timer.restart().asSeconds();
 
-                // Handle events
-                while (const std::optional event = m_Window->pollEvent()) {
-                        if (event->is<sf::Event::Closed>()) {
-                                Stop();
-                        }
-                }
+                HandleEvents();
 
                 // Handle Update.
                 for (const std::unique_ptr<Layer>& layer : m_LayerStack) layer->OnUpdate(deltaTime);
@@ -56,3 +53,18 @@ void Engine::Application::Run() {
 /// The game loop will finish it's current cycle.
 ///
 void Engine::Application::Stop() { m_IsRunning = false; }
+
+///
+/// Handles the events for the m_Window, and pass them along to the layers if neccesary.
+///
+void Engine::Application::HandleEvents() {
+        while (const std::optional event = m_Window->pollEvent()) {
+                if (event->is<sf::Event::Closed>()) {
+                        Stop();
+                        continue;
+                }
+
+                for (const std::unique_ptr<Layer>& layer : std::views::reverse(m_LayerStack))
+                        if (layer->OnEvent(event)) break;
+        }
+}

@@ -37,5 +37,7 @@ class Application {
         sf::RenderWindow* m_Window;
         std::vector<std::unique_ptr<Layer>> m_LayerStack;
         bool m_IsRunning;
+
+        void HandleEvents();
 };
 }  // namespace Engine
