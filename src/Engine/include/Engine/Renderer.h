@@ -1,4 +1,6 @@
 #pragma once
+#include <cassert>
+
 #include "SFML/Graphics/RenderWindow.hpp"
 
 namespace Engine {
@@ -33,6 +35,24 @@ class Renderer {
         void Draw(T Object) {
                 assert(m_Window);
                 m_Window->draw(Object);
+        }
+
+        ///
+        /// Clears the current frame buffer.
+        /// Should be called before drawing or right after Display.
+        ///
+        void Clear() {
+                assert(m_Window);
+                m_Window->clear();
+        }
+
+        ///
+        /// Displays the current buffer to the screen.
+        /// Should be called after drawing has finished, and before Clear.
+        ///
+        void Display() {
+                assert(m_Window);
+                m_Window->display();
         }
 
        private:

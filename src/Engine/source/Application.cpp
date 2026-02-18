@@ -1,5 +1,10 @@
 #include "Engine/Application.h"
 
+#include <memory>
+
+#include "Engine/Renderer.h"
+#include "SFML/System/Clock.hpp"
+
 ///
 /// Creates a new Application instance based on the specified ApplicationConfig.
 ///
@@ -15,14 +20,25 @@ Engine::Application::Application(const ApplicationConfig& config) {
 ///
 void Engine::Application::Run() {
         m_IsRunning = true;
+        sf::Clock timer;
 
         while (m_IsRunning) {
+                float deltaTime = timer.restart().asSeconds();
+
+                // Handle events
                 while (const std::optional event = m_Window->pollEvent()) {
                         if (event->is<sf::Event::Closed>()) {
                                 Stop();
                         }
                 }
-                m_Window->display();
+
+                // Handle Update.
+                for (const std::unique_ptr<Layer>& layer : m_LayerStack) layer->OnUpdate(deltaTime);
+
+                // Handle Rendering.
+                Renderer::Get().Clear();
+                for (const std::unique_ptr<Layer>& layer : m_LayerStack) layer->OnRender();
+                Renderer::Get().Display();
         }
 }
 

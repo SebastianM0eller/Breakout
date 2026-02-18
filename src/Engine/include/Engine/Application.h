@@ -1,5 +1,10 @@
 #pragma once
 
+#include <concepts>
+#include <memory>
+#include <vector>
+
+#include "Engine/Layer.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 
 namespace Engine {
@@ -22,8 +27,15 @@ class Application {
         void Run();
         void Stop();
 
+        template <typename T>
+                requires(std::derived_from<T, Layer>)
+        void PushLayer(T) {
+                m_LayerStack.push_back(std::make_unique<T>());
+        }
+
        private:
         sf::RenderWindow* m_Window;
+        std::vector<std::unique_ptr<Layer>> m_LayerStack;
         bool m_IsRunning;
 };
 }  // namespace Engine
