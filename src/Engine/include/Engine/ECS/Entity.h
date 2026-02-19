@@ -9,6 +9,7 @@
 namespace Engine {
 
 using Entity = uint32_t;
+using ComponentType = uint8_t;
 
 template <uint8_t ComponentCount, uint32_t EntityCount>
 class EntityManager {
