@@ -65,6 +65,6 @@ void Engine::Application::HandleEvents() {
                 }
 
                 for (const std::unique_ptr<Layer>& layer : std::views::reverse(m_LayerStack))
-                        if (layer->OnEvent(event)) break;
+                        if (layer->OnEvent(*event)) break;
         }
 }
