@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <bitset>
 #include <cassert>
 #include <cstdint>
@@ -9,13 +10,12 @@ namespace Engine {
 
 using Entity = uint32_t;
 
-template <uint8_t ComponentCount>
+template <uint8_t ComponentCount, uint32_t EntityCount>
 class EntityManager {
         using Signature = std::bitset<ComponentCount>;
 
        public:
-        EntityManager();                      // For a standard allocation of 1024 Entities.
-        EntityManager(uint32_t entityCount);  // Allocate for Size Entities.
+        EntityManager();  // For a standard allocation of EntityCount Entities.
 
         Entity CreateEntity();
         void DestroyEntity(Entity entity);
@@ -25,37 +25,25 @@ class EntityManager {
        private:
         std::queue<Entity> m_AvailableEntities{};
         uint32_t m_LivingCount{};
-        uint32_t m_MaxEntityCount{};
-        std::vector<Signature> m_Signatures{};
+        std::array<Signature, EntityCount> m_Signatures{};
 };
 
 //
-//  Creates a new EntityManager with the templated ComponentCount, and a default max entity count of 1024.
+//  Creates a new EntityManager with the templated ComponentCount, and a default max entity count of EntityCount.
 //
-template <uint8_t ComponentCount>
-EntityManager<ComponentCount>::EntityManager() {
-        for (Entity entity = 0; entity < 1024; entity++) m_AvailableEntities.push(entity);
-        m_MaxEntityCount = 1024;
-        m_Signatures.resize(1024);
-}
-
-///
-/// Creates a new EntityManager with the templated ComponentCount, and with a specified max entity count.
-///
-template <uint8_t ComponentCount>
-EntityManager<ComponentCount>::EntityManager(uint32_t entityCount) {
-        for (Entity entity = 0; entity < entityCount; entity++) m_AvailableEntities.push(entity);
-        m_MaxEntityCount = entityCount;
-        m_Signatures.resize(entityCount);
+template <uint8_t ComponentCount, uint32_t EntityCount>
+EntityManager<ComponentCount, EntityCount>::EntityManager() {
+        for (Entity entity = 0; entity < EntityCount; entity++) m_AvailableEntities.push(entity);
+        m_Signatures.resize(EntityCount);
 }
 
 ///
 /// Retrives an available entity ID from the m_AvailableEntities.
 /// Asserts that there are available entities.
 ///
-template <uint8_t ComponentCount>
-Entity EntityManager<ComponentCount>::CreateEntity() {
-        assert(m_LivingCount < m_MaxEntityCount && "To many entities in existance");
+template <uint8_t ComponentCount, uint32_t EntityCount>
+Entity EntityManager<ComponentCount, EntityCount>::CreateEntity() {
+        assert(m_LivingCount < EntityCount && "To many entities in existance");
 
         Entity entity = m_AvailableEntities.front();
         m_AvailableEntities.pop();
@@ -68,9 +56,9 @@ Entity EntityManager<ComponentCount>::CreateEntity() {
 /// Marks the entity as available, and resets its signature.
 /// Asserts that the entity has a valid ID.
 ///
-template <uint8_t ComponentCount>
-void EntityManager<ComponentCount>::DestroyEntity(Entity entity) {
-        assert(entity < m_MaxEntityCount && "Entity out of range");
+template <uint8_t ComponentCount, uint32_t EntityCount>
+void EntityManager<ComponentCount, EntityCount>::DestroyEntity(Entity entity) {
+        assert(entity < EntityCount && "Entity out of range");
 
         m_Signatures[entity].reset();
 
@@ -82,9 +70,9 @@ void EntityManager<ComponentCount>::DestroyEntity(Entity entity) {
 /// Assigns the specified signature to the provided entity.
 /// Asserts that the ID of the entity is valid.
 ///
-template <uint8_t ComponentCount>
-void EntityManager<ComponentCount>::SetSignature(Entity entity, Signature signature) {
-        assert(entity < m_MaxEntityCount && "Entity out of range");
+template <uint8_t ComponentCount, uint32_t EntityCount>
+void EntityManager<ComponentCount, EntityCount>::SetSignature(Entity entity, Signature signature) {
+        assert(entity < EntityCount && "Entity out of range");
 
         m_Signatures[entity] = signature;
 }
@@ -93,13 +81,12 @@ void EntityManager<ComponentCount>::SetSignature(Entity entity, Signature signat
 /// Retrives the signature from the provided entity.
 /// Asserts that the ID of the is valid.
 ///
-template <uint8_t ComponentCount>
-std::bitset<ComponentCount> EntityManager<ComponentCount>::GetSignature(Entity entity) {
-        assert(entity << m_MaxEntityCount && "Entity out of range");
+template <uint8_t ComponentCount, uint32_t EntityCount>
+std::bitset<ComponentCount> EntityManager<ComponentCount, EntityCount>::GetSignature(Entity entity) {
+        assert(entity << EntityCount && "Entity out of range");
 
         return m_Signatures[entity];
 }
-
 }  // namespace Engine
 
 // Based on [https://austinmorlan.com/posts/entity_component_system/]
