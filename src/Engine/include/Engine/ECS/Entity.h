@@ -13,9 +13,8 @@ using ComponentType = uint8_t;
 
 template <uint8_t ComponentCount, uint32_t EntityCount>
 class EntityManager {
-        using Signature = std::bitset<ComponentCount>;
-
        public:
+        using Signature = std::bitset<ComponentCount>;
         EntityManager();  // For a standard allocation of EntityCount Entities.
 
         Entity CreateEntity();
@@ -35,7 +34,6 @@ class EntityManager {
 template <uint8_t ComponentCount, uint32_t EntityCount>
 EntityManager<ComponentCount, EntityCount>::EntityManager() {
         for (Entity entity = 0; entity < EntityCount; entity++) m_AvailableEntities.push(entity);
-        m_Signatures.resize(EntityCount);
 }
 
 ///
@@ -84,7 +82,7 @@ void EntityManager<ComponentCount, EntityCount>::SetSignature(Entity entity, Sig
 ///
 template <uint8_t ComponentCount, uint32_t EntityCount>
 std::bitset<ComponentCount> EntityManager<ComponentCount, EntityCount>::GetSignature(Entity entity) {
-        assert(entity << EntityCount && "Entity out of range");
+        assert(entity < EntityCount && "Entity out of range");
 
         return m_Signatures[entity];
 }

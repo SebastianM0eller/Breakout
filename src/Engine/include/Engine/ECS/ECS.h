@@ -69,7 +69,12 @@ class ECS {
 
         template <typename T>
         void SetSystemSignature(Signature signature) {
-                m_SystemManager->template SetSystemSignature<T>(signature);
+                m_SystemManager->template SetSignature<T>(signature);
+        }
+
+        template <typename T>
+        std::shared_ptr<T> GetSystem() {
+                return m_SystemManager->template GetSystem<T>();
         }
 
        private:
@@ -78,3 +83,5 @@ class ECS {
         std::unique_ptr<SystemManager<ComponentCount>> m_SystemManager;
 };
 }  // namespace Engine
+
+// Based on [https://austinmorlan.com/posts/entity_component_system/]

@@ -15,10 +15,14 @@ class System {
 
 template <uint8_t ComponentCount>
 class SystemManager {
+       public:
         using Signature = std::bitset<ComponentCount>;
 
         template <typename T>
         std::shared_ptr<T> RegisterSystem();
+
+        template <typename T>
+        std::shared_ptr<T> GetSystem();
 
         template <typename T>
         void SetSignature(Signature signature);
@@ -45,12 +49,22 @@ std::shared_ptr<T> SystemManager<ComponentCount>::RegisterSystem() {
 
 template <uint8_t ComponentCount>
 template <typename T>
+std::shared_ptr<T> SystemManager<ComponentCount>::GetSystem() {
+        std::type_index typeName(typeid(T));
+
+        assert(m_Systems.find(typeName) != m_Systems.end() && "Accessing a system before registering");
+
+        return std::static_pointer_cast<T>(m_Systems[typeName]);
+}
+
+template <uint8_t ComponentCount>
+template <typename T>
 void SystemManager<ComponentCount>::SetSignature(Signature signature) {
         std::type_index typeName(typeid(T));
 
         assert(m_Systems.find(typeName) != m_Systems.end() && "System used before Registering");
 
-        m_Signatures.insert(typeName, signature);
+        m_Signatures.insert({typeName, signature});
 }
 
 template <uint8_t ComponentCount>
@@ -74,3 +88,5 @@ void SystemManager<ComponentCount>::EntitySignatureChanged(Entity entity, Signat
 }
 
 }  // namespace Engine
+
+// Based on [https://austinmorlan.com/posts/entity_component_system/]
