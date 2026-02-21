@@ -6,11 +6,12 @@
 #include "Engine/ResourceManager.h"
 #include "SFML/Graphics/Sprite.hpp"
 
-GameLayer::GameLayer() : m_TestSprite(*Engine::ResourceManager::Get().Load<sf::Texture>("assets/TornadoPressure.png")) {
+GameLayer::GameLayer()
+    : m_TestSprite(*Engine::ResourceManager::Get().Load<sf::Texture>("assets/Textures/BreakoutBallv2.png")) {
         std::cout << "The sprite has the scaling: " << m_TestSprite.getScale().x << m_TestSprite.getScale().y;
 }
 
-GameLayer::~GameLayer() { Engine::ResourceManager::Get().Remove<sf::Texture>("assets/TornadoPressure.png"); }
+GameLayer::~GameLayer() { Engine::ResourceManager::Get().Remove<sf::Texture>("assets/Textures/BreakoutBallv2.png"); }
 
 void GameLayer::OnUpdate(float deltaTime) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) m_TestSprite.move({0, -10 * deltaTime});

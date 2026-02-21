@@ -2,11 +2,13 @@
 #include <Engine/ECS/ECS.h>
 
 #include "ECSExample.h"
+#include "GameLayer.h"
 
 int main() {
         Engine::Application::ApplicationConfig config;
         Engine::Application game(config);
 
         game.PushLayer<ECSLayer>();
+        game.PushLayer<GameLayer>();
         game.Run();
 }
