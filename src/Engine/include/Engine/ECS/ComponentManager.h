@@ -1,4 +1,8 @@
 #pragma once
+
+#include <memory>
+#include <typeindex>
+
 #include "Engine/ECS/Component.h"
 
 namespace Engine {
@@ -32,6 +36,10 @@ class ComponentManager {
         std::shared_ptr<ComponentArray<T, EntityCount>> GetComponentArray();
 };
 
+///
+/// Creates a new ComponentArray, to hold the components.
+/// Asserts that the componenttype has not been registered before.
+///
 template <uint32_t EntityCount>
 template <typename T>
 void ComponentManager<EntityCount>::RegisterComponent() {
@@ -46,35 +54,54 @@ void ComponentManager<EntityCount>::RegisterComponent() {
         m_NextComponentType++;
 }
 
+///
+/// Retrives the ComponentType.
+/// Asserts that the componenttype was registered before being accesed.
+///
 template <uint32_t EntityCount>
 template <typename T>
 ComponentType ComponentManager<EntityCount>::GetComponentType() {
         std::type_index typeName(typeid(T));
 
         assert(m_ComponentTypes.find(typeName) != m_ComponentTypes.end() &&
-               "Component was not registered before being used");
+               "Component was not registered before being acessed");
 
         return m_ComponentTypes[typeName];
 }
 
+///
+/// Add the specified component to the provided entity.
+/// Asserts that the entity does not already have a component of that type.
+///
 template <uint32_t EntityCount>
 template <typename T>
 void ComponentManager<EntityCount>::AddComponent(Entity entity, T component) {
         GetComponentArray<T>()->InsertData(entity, component);
 }
 
+///
+/// Removes the componenttype from the specified entity.
+/// Asserts that the entity does have a component of that type.
+///
 template <uint32_t EntityCount>
 template <typename T>
 void ComponentManager<EntityCount>::RemoveComponent(Entity entity) {
         GetComponentArray<T>()->RemoveData(entity);
 }
 
+///
+/// Retrives a reference to the component from the specified entity.
+/// Asserts that the entity has the specified component.
+///
 template <uint32_t EntityCount>
 template <typename T>
 T& ComponentManager<EntityCount>::GetComponent(Entity entity) {
         return GetComponentArray<T>()->GetData(entity);
 }
 
+///
+/// Removes the entity's components from the respective ComponentArrays, while keeping them dense.
+///
 template <uint32_t EntityCount>
 void ComponentManager<EntityCount>::EntityDestroyed(Entity entity) {
         for (auto const& [type, componentArray] : m_ComponentArrays) {
@@ -82,6 +109,10 @@ void ComponentManager<EntityCount>::EntityDestroyed(Entity entity) {
         }
 }
 
+///
+/// Retrives a shared_ptr to the dense ComponentArray for the specified type.
+/// Asserts that the component has been registered.
+///
 template <uint32_t EntityCount>
 template <typename T>
 std::shared_ptr<ComponentArray<T, EntityCount>> ComponentManager<EntityCount>::GetComponentArray() {

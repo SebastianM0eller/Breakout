@@ -2,8 +2,6 @@
 #include <array>
 #include <cassert>
 #include <cstdint>
-#include <memory>
-#include <typeindex>
 #include <unordered_map>
 
 #include "Engine/ECS/Entity.h"
@@ -49,6 +47,10 @@ void ComponentArray<T, EntityCount>::InsertData(Entity entity, T component) {
         m_Size++;
 }
 
+///
+/// Removes the component of the entity, from the ComponentArray while keeping the ComponentArray dense.
+/// Asserts that the entity has the component trying to be removed.
+///
 template <typename T, uint32_t EntityCount>
 void ComponentArray<T, EntityCount>::RemoveData(Entity entity) {
         assert(m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end() &&
@@ -70,6 +72,10 @@ void ComponentArray<T, EntityCount>::RemoveData(Entity entity) {
         m_Size--;
 }
 
+///
+/// Retrieves a reference to the component associated with the entity.
+/// Asserts that the entity has the component trying to be retrived.
+///
 template <typename T, uint32_t EntityCount>
 T& ComponentArray<T, EntityCount>::GetData(Entity entity) {
         assert(m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end() &&
@@ -78,6 +84,10 @@ T& ComponentArray<T, EntityCount>::GetData(Entity entity) {
         return m_ComponentArray[m_EntityToIndexMap[entity]];
 }
 
+///
+/// Removes the component associated with the destroyed entity, while keeping the ComponentArray dense.
+/// If the entity has no associated component, this does nothing.
+///
 template <typename T, uint32_t EntityCount>
 void ComponentArray<T, EntityCount>::EntityDestroyed(Entity entity) {
         if (m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end()) RemoveData(entity);

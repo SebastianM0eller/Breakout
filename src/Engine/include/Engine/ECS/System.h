@@ -35,6 +35,10 @@ class SystemManager {
         std::unordered_map<std::type_index, std::shared_ptr<System>> m_Systems{};
 };
 
+///
+/// Used to register a new system.
+/// If the system has already been registered, and assert is triggered in debug mode.
+///
 template <uint8_t ComponentCount>
 template <typename T>
 std::shared_ptr<T> SystemManager<ComponentCount>::RegisterSystem() {
@@ -47,6 +51,10 @@ std::shared_ptr<T> SystemManager<ComponentCount>::RegisterSystem() {
         return system;
 }
 
+///
+/// Retrives a shared_ptr to the system.
+/// An assert is triggered in debug, if the system has not been registered.
+///
 template <uint8_t ComponentCount>
 template <typename T>
 std::shared_ptr<T> SystemManager<ComponentCount>::GetSystem() {
@@ -57,6 +65,10 @@ std::shared_ptr<T> SystemManager<ComponentCount>::GetSystem() {
         return std::static_pointer_cast<T>(m_Systems[typeName]);
 }
 
+///
+/// Applies the specified signature to the system.
+/// An assert is triggered, if the system has not been registered.
+///
 template <uint8_t ComponentCount>
 template <typename T>
 void SystemManager<ComponentCount>::SetSignature(Signature signature) {
@@ -67,6 +79,9 @@ void SystemManager<ComponentCount>::SetSignature(Signature signature) {
         m_Signatures.insert({typeName, signature});
 }
 
+///
+/// Informs the different system, that an entity has been destroyed.
+///
 template <uint8_t ComponentCount>
 void SystemManager<ComponentCount>::EntityDestroyed(Entity entity) {
         for (auto const& [type, system] : m_Systems) {
@@ -74,6 +89,9 @@ void SystemManager<ComponentCount>::EntityDestroyed(Entity entity) {
         }
 }
 
+///
+/// Used to inform the systems that the signature of the entity has changed.
+///
 template <uint8_t ComponentCount>
 void SystemManager<ComponentCount>::EntitySignatureChanged(Entity entity, Signature signature) {
         for (const auto& [type, system] : m_Systems) {
