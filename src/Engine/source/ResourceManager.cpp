@@ -53,6 +53,13 @@ void Engine::ResourceManager::Remove<sf::Texture>(const std::string& path) {
 }
 
 template <>
+void Engine::ResourceManager::Remove(sf::Texture* texture_ptr) {
+        assert(texture_ptr && "Cannot remove a nullptr");
+
+        Remove<sf::Texture>(GetString(texture_ptr));
+}
+
+template <>
 const std::string& Engine::ResourceManager::GetString(sf::Texture* texture_ptr) {
         assert(m_TextureToString.find(texture_ptr) != m_TextureToString.end() &&
                "There is no string associated with that ptr");
