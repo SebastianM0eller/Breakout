@@ -40,6 +40,7 @@ class ResourceManager {
         ///
         /// Returns a const reference to the string mapped to the texture.
         /// Can be used to automatically call the correct Remove, based on a ptr.
+        /// Calling this without the ptr being mapped, will result in undefined behaviour.
         ///
         template <typename T>
         const std::string& GetString(T*);
