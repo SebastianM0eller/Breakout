@@ -1,5 +1,6 @@
 #include "Engine/ResourceManager.h"
 
+#include <cassert>
 #include <iostream>
 
 #include "SFML/Graphics/Texture.hpp"
@@ -26,6 +27,7 @@ sf::Texture* Engine::ResourceManager::Load<sf::Texture>(const std::string& path)
         // We update the cache.
         m_TextureCache[path] = newTexture;
         m_TextureCount[path] = 1;
+        m_TextureToString[newTexture] = path;
         return newTexture;
 }
 
@@ -43,8 +45,17 @@ void Engine::ResourceManager::Remove<sf::Texture>(const std::string& path) {
         // We decrement the count, and do cleanup if its 0.
         m_TextureCount[path]--;
         if (m_TextureCount[path] <= 0) {
-                delete m_TextureCache[path];  // Cleanup
+                m_TextureToString.erase(m_TextureCache[path]);  // Cleanup
+                delete m_TextureCache[path];
                 m_TextureCount.erase(path);
                 m_TextureCache.erase(path);
         }
+}
+
+template <>
+const std::string& Engine::ResourceManager::GetString(sf::Texture* texture_ptr) {
+        assert(m_TextureToString.find(texture_ptr) != m_TextureToString.end() &&
+               "There is no string associated with that ptr");
+
+        return m_TextureToString[texture_ptr];
 }
