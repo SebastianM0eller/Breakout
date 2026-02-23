@@ -7,7 +7,7 @@ namespace Engine {
 class ManagedSprite {
        public:
         // Used for default initialization, needed for ECS.
-        ManagedSprite() : m_Sprite(*ResourceManager::Get().Load<sf::Texture>("assets/Texture/Fallback.png")) {}
+        ManagedSprite() : m_Sprite(*ResourceManager::Get().Load<sf::Texture>("assets/Textures/Fallback.png")) {}
 
         // Used to load a specific sprite.
         ManagedSprite(const std::string& sourcePath)
