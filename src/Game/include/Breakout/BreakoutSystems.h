@@ -108,7 +108,7 @@ class BreakoutRenderSpritesSystem : public Engine::System {
         void OnRender(Engine::ECS<ComponentCount, EntityCount>& system) {
                 for (auto const entity : m_Entities) {
                         Sprite& sprite = system.template GetComponent<Sprite>(entity);
-                        Engine::Renderer::Get().Draw(sprite.sprite);
+                        Engine::Renderer::Get().Draw(sprite.sprite.GetSprite());
                 }
         }
         ///
