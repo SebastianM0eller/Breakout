@@ -36,13 +36,8 @@ struct Sprite {
 ///
 /// Hold a Vector2 descriping the location.
 ///
-struct TransformComponent {
-        float x, y;
-};
-
-// Just a temp class, because TransformComponent is causing a crash.
-struct Location {
-        float x, y;
+struct Transform {
+        sf::Vector2f location;
 };
 
 ///
