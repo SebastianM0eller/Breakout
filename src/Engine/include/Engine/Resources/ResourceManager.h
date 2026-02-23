@@ -45,13 +45,6 @@ class ResourceManager {
         template <typename T>
         void Remove(T*);
 
-       private:
-        ResourceManager() {}
-
-        std::unordered_map<std::string, sf::Texture*> m_TextureCache;
-        std::unordered_map<sf::Texture*, std::string> m_TextureToString;
-        std::unordered_map<std::string, int16_t> m_TextureCount;
-
         ///
         /// Returns a const reference to the string mapped to the texture.
         /// Can be used to automatically call the correct Remove, based on a ptr.
@@ -59,6 +52,13 @@ class ResourceManager {
         ///
         template <typename T>
         const std::string& GetString(T*);
+
+       private:
+        ResourceManager() {}
+
+        std::unordered_map<std::string, sf::Texture*> m_TextureCache;
+        std::unordered_map<sf::Texture*, std::string> m_TextureToString;
+        std::unordered_map<std::string, int16_t> m_TextureCount;
 };
 
 template <>

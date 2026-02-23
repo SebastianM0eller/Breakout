@@ -5,7 +5,7 @@ set(ENGINE_SOURCES
 
 set(ENGINE_HEADERS
   include/Engine/Application.h
-  include/Engine/ResourceManager.h
+  include/Engine/Resources/ResourceManager.h
   include/Engine/Renderer.h
   include/Engine/Layer.h
 )

@@ -45,7 +45,7 @@ template <typename T>
 void ComponentManager<EntityCount>::RegisterComponent() {
         std::type_index typeName(typeid(T));
 
-        assert(m_ComponentTypes.find(typeName) != m_ComponentTypes.end() &&
+        assert(m_ComponentTypes.find(typeName) == m_ComponentTypes.end() &&
                "Registering same component more than once");
 
         m_ComponentTypes.insert({typeName, m_NextComponentType});
