@@ -7,8 +7,7 @@ target_include_directories(Game PUBLIC
 )
 
 target_sources(Game PRIVATE
-  source/GameLayer.cpp
-  source/ECSExample.cpp
+  source/BreakoutGameLayer.cpp
 )
 
 
