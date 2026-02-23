@@ -35,6 +35,8 @@ class ManagedSprite {
         // Override the destructor
         ~ManagedSprite() { ResourceManager::Get().Remove(GetTexture()); }
 
+        sf::Sprite& GetSprite() { return m_Sprite; }
+
        private:
         sf::Sprite m_Sprite;
         sf::Texture* GetTexture() const { return const_cast<sf::Texture*>(&m_Sprite.getTexture()); }
