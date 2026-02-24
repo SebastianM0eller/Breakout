@@ -4,6 +4,7 @@
 
 #include "SFML/Graphics/Drawable.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/System/Vector2.hpp"
 
 namespace Engine {
 class Renderer {
@@ -54,6 +55,16 @@ class Renderer {
         void Display() {
                 assert(m_Window && "Window has to be initialized");
                 m_Window->display();
+        }
+
+        ///
+        /// Return a vector2 containing the size of the current windows ViewSize.
+        /// It is returned as width, height.
+        /// An assert is triggered if the window has not yet been initialized.
+        ///
+        sf::Vector2f GetViewSize() {
+                assert(m_Window && "Wnidow has to be initialized");
+                return m_Window->getView().getSize();
         }
 
        private:
