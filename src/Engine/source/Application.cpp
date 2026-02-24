@@ -11,13 +11,13 @@
 /// Creates a new Application instance based on the specified ApplicationConfig.
 ///
 Engine::Application::Application(const ApplicationConfig& config) {
+        m_Window = std::make_shared<sf::RenderWindow>();
         m_Window->create(sf::VideoMode::getDesktopMode(), config.WindowName);
         m_Window->setView(sf::View(sf::FloatRect({0, 0}, config.WindowViewSize)));
 
         m_IsRunning = false;
 
         Renderer::Get().SetWindow(m_Window);
-        ;
 }
 
 ///

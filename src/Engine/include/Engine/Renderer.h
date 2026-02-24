@@ -1,11 +1,8 @@
 #pragma once
 #include <cassert>
-#include <concepts>
 #include <memory>
 
-#include "SFML/Graphics/Drawable.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/Graphics/Transform.hpp"
 
 namespace Engine {
 class Renderer {
@@ -37,7 +34,6 @@ class Renderer {
         ///
         ///
         template <typename T>
-                requires(std::derived_from<sf::Drawable, T>)
         void Draw(T Object) {
                 assert(m_Window && "Window has to be initialized");
                 m_Window->draw(Object);
@@ -47,7 +43,7 @@ class Renderer {
         /// Clears the current frame buffer.
         /// Should be called before drawing or right after Display.
         ///
-        void Clear() noexcept {
+        void Clear() {
                 assert(m_Window && "Window has to be initialized");
                 m_Window->clear();
         }
@@ -56,7 +52,7 @@ class Renderer {
         /// Displays the current buffer to the screen.
         /// Should be called after drawing has finished, and before Clear.
         ///
-        void Display() noexcept {
+        void Display() {
                 assert(m_Window && "Window has to be initialized");
                 m_Window->display();
         }
