@@ -1,7 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include "Engine/Resources/Texture.h"
 #include "SFML/System/Vector2.hpp"
+#include "SFML/Window/Keyboard.hpp"
 
 enum class ShapeType {
         BoxCollider,
@@ -45,4 +48,10 @@ struct Transform {
 ///
 struct RigidBody {
         sf::Vector2f velocity;
+};
+
+struct HorizontalMovement {
+        std::vector<sf::Keyboard::Key> moveRightKeys;
+        std::vector<sf::Keyboard::Key> moveLeftKeys;
+        float movementSpeed;
 };
