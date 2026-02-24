@@ -1,7 +1,11 @@
 #pragma once
 #include <cassert>
+#include <concepts>
+#include <memory>
 
+#include "SFML/Graphics/Drawable.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/Transform.hpp"
 
 namespace Engine {
 class Renderer {
@@ -13,7 +17,7 @@ class Renderer {
         /// If the Renderer is not yet initialized, it's constructed automatically.
         /// The first time you get the Renderer, you need to provide it with a window before it can draw.
         ///
-        static Renderer& Get() {
+        static Renderer& Get() noexcept {
                 static Renderer instance;
                 return instance;
         }
@@ -22,8 +26,8 @@ class Renderer {
         /// Sets the internal window to the provided window.
         /// Asserts that the window is a valid ptr.
         ///
-        void SetWindow(sf::RenderWindow* window) {
-                assert(window);
+        void SetWindow(std::shared_ptr<sf::RenderWindow> window) noexcept {
+                assert(window && "Window is not allowed to be a nullptr");
                 m_Window = window;
         }
 
@@ -31,9 +35,11 @@ class Renderer {
         /// Draws the object to the current RenderWindow.
         /// Asserts that the RenderWindow is a valid ptr.
         ///
+        ///
         template <typename T>
+                requires(std::derived_from<sf::Drawable, T>, std::derived_from<sf::Transform, T>)
         void Draw(T Object) {
-                assert(m_Window);
+                assert(m_Window && "Window has to be initialized");
                 m_Window->draw(Object);
         }
 
@@ -41,8 +47,8 @@ class Renderer {
         /// Clears the current frame buffer.
         /// Should be called before drawing or right after Display.
         ///
-        void Clear() {
-                assert(m_Window);
+        void Clear() noexcept {
+                assert(m_Window && "Window has to be initialized");
                 m_Window->clear();
         }
 
@@ -50,14 +56,14 @@ class Renderer {
         /// Displays the current buffer to the screen.
         /// Should be called after drawing has finished, and before Clear.
         ///
-        void Display() {
-                assert(m_Window);
+        void Display() noexcept {
+                assert(m_Window && "Window has to be initialized");
                 m_Window->display();
         }
 
        private:
         Renderer() {}
 
-        sf::RenderWindow* m_Window{nullptr};
+        std::shared_ptr<sf::RenderWindow> m_Window{nullptr};
 };
 }  // namespace Engine

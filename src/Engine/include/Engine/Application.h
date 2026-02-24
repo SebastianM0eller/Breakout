@@ -17,7 +17,7 @@ class Application {
         ///
         struct ApplicationConfig {
                 const char* WindowName{"Game"};
-                sf::Vector2f WindowViewSize{800, 600};
+                sf::Vector2f WindowViewSize{400, 300};
                 bool vsync{true};
         };
 
