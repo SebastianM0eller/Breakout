@@ -17,7 +17,7 @@ class Application {
         ///
         struct ApplicationConfig {
                 const char* WindowName{"Game"};
-                sf::Vector2f WindowViewSize{400, 300};
+                sf::Vector2f WindowViewSize{800, 600};
                 bool vsync{true};
         };
 
@@ -33,7 +33,7 @@ class Application {
         }
 
        private:
-        std::shared_ptr<sf::RenderWindow> m_Window{};
+        std::shared_ptr<sf::RenderWindow> m_Window;
         std::vector<std::unique_ptr<Layer>> m_LayerStack;
         bool m_IsRunning;
 

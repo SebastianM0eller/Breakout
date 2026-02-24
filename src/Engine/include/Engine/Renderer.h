@@ -2,6 +2,7 @@
 #include <cassert>
 #include <memory>
 
+#include "SFML/Graphics/Drawable.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
 namespace Engine {
@@ -32,11 +33,9 @@ class Renderer {
         /// Draws the object to the current RenderWindow.
         /// Asserts that the RenderWindow is a valid ptr.
         ///
-        ///
-        template <typename T>
-        void Draw(T Object) {
+        void Draw(const sf::Drawable& object) {
                 assert(m_Window && "Window has to be initialized");
-                m_Window->draw(Object);
+                m_Window->draw(object);
         }
 
         ///
