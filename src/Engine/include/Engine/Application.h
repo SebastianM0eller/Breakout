@@ -22,7 +22,6 @@ class Application {
         };
 
         Application(const ApplicationConfig& config);
-        ~Application();
 
         void Run();
         void Stop();
@@ -34,7 +33,7 @@ class Application {
         }
 
        private:
-        sf::RenderWindow* m_Window;
+        std::shared_ptr<sf::RenderWindow> m_Window;
         std::vector<std::unique_ptr<Layer>> m_LayerStack;
         bool m_IsRunning;
 

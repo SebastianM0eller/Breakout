@@ -37,7 +37,7 @@ class Renderer {
         ///
         ///
         template <typename T>
-                requires(std::derived_from<sf::Drawable, T>, std::derived_from<sf::Transform, T>)
+                requires(std::derived_from<sf::Drawable, T>)
         void Draw(T Object) {
                 assert(m_Window && "Window has to be initialized");
                 m_Window->draw(Object);

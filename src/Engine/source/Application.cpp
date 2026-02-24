@@ -11,7 +11,6 @@
 /// Creates a new Application instance based on the specified ApplicationConfig.
 ///
 Engine::Application::Application(const ApplicationConfig& config) {
-        m_Window = new sf::RenderWindow();
         m_Window->create(sf::VideoMode::getDesktopMode(), config.WindowName);
         m_Window->setView(sf::View(sf::FloatRect({0, 0}, config.WindowViewSize)));
 
@@ -20,11 +19,6 @@ Engine::Application::Application(const ApplicationConfig& config) {
         Renderer::Get().SetWindow(m_Window);
         ;
 }
-
-///
-/// Deletes the ptr to the RenderWindow, to avoid memory leaks.
-///
-Engine::Application::~Application() { delete m_Window; }
 
 ///
 /// Sets m_IsRunning to true, and starts the game loop.
