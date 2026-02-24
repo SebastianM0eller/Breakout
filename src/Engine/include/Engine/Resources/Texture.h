@@ -7,11 +7,14 @@ namespace Engine {
 class ManagedSprite {
        public:
         // Used for default initialization, needed for ECS.
-        ManagedSprite() : m_Sprite(*ResourceManager::Get().Load<sf::Texture>("assets/Textures/Fallback.png")) {}
+        ManagedSprite() : m_Sprite(*ResourceManager::Get().Load<sf::Texture>("assets/Textures/Fallback.png")) {
+                m_Sprite.setOrigin(m_Sprite.getLocalBounds().size / 2.0f);
+        }
 
         // Used to load a specific sprite.
-        ManagedSprite(const std::string& sourcePath)
-            : m_Sprite(*ResourceManager::Get().Load<sf::Texture>(sourcePath)) {};
+        ManagedSprite(const std::string& sourcePath) : m_Sprite(*ResourceManager::Get().Load<sf::Texture>(sourcePath)) {
+                m_Sprite.setOrigin(m_Sprite.getLocalBounds().size / 2.0f);
+        };
 
         // Override the default copy.
         ManagedSprite(const ManagedSprite& other)
@@ -20,15 +23,17 @@ class ManagedSprite {
 
         // Override the assignment operator.
         ManagedSprite& operator=(const ManagedSprite& other) {
-                if (this != &other) {
-                        ResourceManager& instance = ResourceManager::Get();
+                if (this == &other) return *this;
 
-                        // Decrease the count for the initial Texture
-                        instance.Remove(GetTexture());
+                ResourceManager& instance = ResourceManager::Get();
 
-                        sf::Texture* newTexture = instance.Load<sf::Texture>(instance.GetString(other.GetTexture()));
-                        m_Sprite.setTexture(*newTexture, true);
-                }
+                // Decrease the count for the initial Texture
+                instance.Remove(GetTexture());
+
+                sf::Texture* newTexture = instance.Load<sf::Texture>(instance.GetString(other.GetTexture()));
+                m_Sprite.setTexture(*newTexture, true);
+                m_Sprite.setOrigin(m_Sprite.getLocalBounds().size / 2.0f);
+
                 return *this;
         }
 
