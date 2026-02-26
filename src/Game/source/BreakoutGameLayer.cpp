@@ -35,25 +35,59 @@ void BreakoutGameLayer::RegisterSystems() {
 
 void BreakoutGameLayer::RegisterEntities() {
         sf::Vector2f viewSize = Engine::Renderer::Get().GetViewSize();
+
         // Add the ball
         Engine::Entity entity = m_ECS.CreateEntity();
         m_ECS.AddComponent(entity, Transform({viewSize.x / 2.0f, viewSize.y - 60}));
         m_ECS.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
-        m_ECS.AddComponent(entity, RigidBody({0, -150}));
+        m_ECS.AddComponent(entity, RigidBody({59, -150}));
 
         CollisionShape circleShape = {.type = ShapeType::CircleCollider, .shapeData = {.circle = {8.0f}}};
         m_ECS.AddComponent(entity, circleShape);
 
         // Add the paddle
         Engine::Entity paddleEntity = m_ECS.CreateEntity();
-        m_ECS.AddComponent(paddleEntity, Transform({viewSize.x / 2.0f, viewSize.y - 50}));
+        m_ECS.AddComponent(paddleEntity, Transform({viewSize.x / 2.0f, viewSize.y - 45}));
         m_ECS.AddComponent(paddleEntity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
+        m_ECS.AddComponent(paddleEntity, RigidBody({0, 0}));
+
+        CollisionShape paddleShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {56.0f, 6.0f}}};
+        m_ECS.AddComponent(paddleEntity, paddleShape);
 
         HorizontalMovement paddleMovement;
         paddleMovement.movementSpeed = 150;
         paddleMovement.moveRightKeys.emplace_back(sf::Keyboard::Key::D);
         paddleMovement.moveLeftKeys.emplace_back(sf::Keyboard::Key::A);
         m_ECS.AddComponent(paddleEntity, paddleMovement);
+
+        // Add the walls.
+        Engine::Entity topWall = m_ECS.CreateEntity();
+        m_ECS.AddComponent(topWall, Transform({viewSize.x / 2.0f, 0}));
+        m_ECS.AddComponent(topWall, RigidBody({0, 0}));
+
+        CollisionShape topShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {viewSize.x, 0}}};
+        m_ECS.AddComponent(topWall, topShape);
+
+        Engine::Entity leftWall = m_ECS.CreateEntity();
+        m_ECS.AddComponent(leftWall, Transform({0, viewSize.y / 2.0f}));
+        m_ECS.AddComponent(leftWall, RigidBody({0, 0}));
+
+        CollisionShape leftShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {0, viewSize.y}}};
+        m_ECS.AddComponent(leftWall, leftShape);
+
+        Engine::Entity buttomWall = m_ECS.CreateEntity();
+        m_ECS.AddComponent(buttomWall, Transform({viewSize.x / 2.0f, viewSize.y}));
+        m_ECS.AddComponent(buttomWall, RigidBody({0, 0}));
+
+        CollisionShape buttomShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {viewSize.x, 0}}};
+        m_ECS.AddComponent(buttomWall, buttomShape);
+
+        Engine::Entity rightWall = m_ECS.CreateEntity();
+        m_ECS.AddComponent(rightWall, Transform({viewSize.x, viewSize.y / 2.0f}));
+        m_ECS.AddComponent(rightWall, RigidBody({0, 0}));
+
+        CollisionShape rightShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {0, viewSize.y}}};
+        m_ECS.AddComponent(rightWall, rightShape);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {

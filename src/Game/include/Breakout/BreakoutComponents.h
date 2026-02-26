@@ -9,6 +9,7 @@
 enum class ShapeType {
         BoxCollider,
         CircleCollider,
+        PaddleCollider,
 };
 
 ///
