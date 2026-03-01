@@ -74,6 +74,9 @@ class BreakoutUpdateEntityLocationSystem : public Engine::System {
 class BreakoutCollisionSystem : public Engine::System {
        public:
         template <uint8_t ComponentCount, uint32_t EntityCount>
+
+        // Todo: Remove the radius from the lambdas, and just check if the distance squared are larger than the
+        // radius squared to see if they collide. (That should make it work correctly)
         void OnUpdate(Engine::ECS<ComponentCount, EntityCount>& system) {
                 for (auto iteratorA = m_Entities.begin(); iteratorA != m_Entities.end(); iteratorA++) {
                         const Engine::Entity entity = *iteratorA;
@@ -154,26 +157,34 @@ class BreakoutCollisionSystem : public Engine::System {
                                                 float verticalDist = topDistance * (topDistance > buttomDistance) +
                                                                      buttomDistance * (buttomDistance >= topDistance);
 
-                                                std::cout << "Denug Print from BreakoutSystems.h, line 157" << "\n";
-                                                std::cout << "Horizontal Dist: " << horizontalDist
-                                                          << "Vertical Dist: " << verticalDist << "\n";
+                                                // Correction for the circle hitting the corner of the box.
+                                                if (horizontalDist * horizontalDist + verticalDist * verticalDist <
+                                                    radius * radius * 0.5)  // The 0.5 is from trial and error.
+                                                        continue;
 
-                                                // If we are closer to the vertical edge, we assume the collision
-                                                // happened there, and vice versa.
-                                                rigidBody.velocity.x *= 1 - 2 * (horizontalDist > verticalDist);
-                                                rigidBody.velocity.y *= 1 - 2 * (verticalDist > horizontalDist);
+                                                // Closer to the top, and moving down.
+                                                bool topVelChange =
+                                                    (topDistance > buttomDistance) && (rigidBody.velocity.y > 0);
 
-                                                // Places the ball at the edge of the edge it collided with.
-                                                // This avoid the ball getting stuck in the wall, bouncing constantly.
-                                                transform.location.x +=
-                                                    (leftDistance * (leftDistance > rightDistance) -
-                                                     rightDistance * (rightDistance >= leftDistance)) *
-                                                    (horizontalDist > verticalDist);
+                                                // Closer to the buttom, and moving up.
+                                                bool butVelChange =
+                                                    (topDistance < buttomDistance) && (rigidBody.velocity.y < 0);
 
-                                                transform.location.y +=
-                                                    (topDistance * (topDistance > buttomDistance) -
-                                                     buttomDistance * (buttomDistance >= topDistance)) *
-                                                    (verticalDist > horizontalDist);
+                                                // Closer to the left, and moving to the right.
+                                                bool leftVelChange =
+                                                    (leftDistance > rightDistance) && (rigidBody.velocity.x > 0);
+
+                                                // Closer to the right, and moving to the left.
+                                                bool rightVelChange =
+                                                    (leftDistance < rightDistance) && (rigidBody.velocity.x < 0);
+
+                                                bool horizontalVelChange = (horizontalDist > verticalDist);
+                                                bool verticalVelChange = (verticalDist > horizontalDist);
+
+                                                rigidBody.velocity.x *=
+                                                    1 - 2 * ((leftVelChange || rightVelChange) && horizontalVelChange);
+                                                rigidBody.velocity.y *=
+                                                    1 - 2 * ((topVelChange || butVelChange) && verticalVelChange);
                                         }
                                 }
 
@@ -316,13 +327,6 @@ class BreakoutRenderSpritesSystem : public Engine::System {
                 for (auto const entity : m_Entities) {
                         Sprite& sprite = system.template GetComponent<Sprite>(entity);
                         Engine::Renderer::Get().Draw(sprite.sprite.GetSprite());
-
-                        sf::Vector2f spriteLocation = sprite.sprite.GetSprite().getOrigin();
-                        sf::Vector2f spriteSize = sprite.sprite.GetSprite().getGlobalBounds().size;
-
-                        std::cout << "Debug pring in BreakoutSystems.h in line 323" << "\n";
-                        std::cout << "Sprite location: " << spriteLocation.x << spriteLocation.y
-                                  << "\n SpriteSize: " << spriteSize.x << spriteSize.y << "\n";
                 }
         }
         ///

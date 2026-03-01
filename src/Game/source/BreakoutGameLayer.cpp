@@ -91,6 +91,7 @@ void BreakoutGameLayer::RegisterEntities() {
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
         m_ECS.GetSystem<BreakoutPhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<BreakoutPaddleMovementSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<BreakoutCollisionSystem>()->OnUpdate(m_ECS);
