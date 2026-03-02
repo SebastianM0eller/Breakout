@@ -253,16 +253,92 @@ class BreakoutCollisionSystem : public Engine::System {
 
                                 if (shape.type == ShapeType::CircleCollider &&
                                     otherShape.type == ShapeType::PaddleCollider) {
-                                        // Handle this collision.
-                                        // For the game, its only really the ball(s) that should be updated, so the
-                                        // other can stay static.
+                                        float radius = shape.shapeData.circle.radius;
+
+                                        float topDistance = getTopDist(
+                                            transform.location,
+                                            otherTransform.location.y - otherShape.shapeData.box.height / 2.0f, radius);
+
+                                        float buttomDistance = getButtomDist(
+                                            transform.location,
+                                            otherTransform.location.y + otherShape.shapeData.box.height / 2.0f, radius);
+
+                                        float leftDistance = getLeftDist(
+                                            transform.location,
+                                            otherTransform.location.x - otherShape.shapeData.box.width / 2.0f, radius);
+
+                                        float rightDistance = getRightDist(
+                                            transform.location,
+                                            otherTransform.location.x + otherShape.shapeData.box.width / 2.0f, radius);
+
+                                        bool horizontalInside = (leftDistance < 0 && rightDistance < 0);
+                                        bool verticalInside = (topDistance < 0 && buttomDistance < 0);
+
+                                        // If both are negative, we know we have a collision.
+                                        // If they are not all negative, there is not a collision.
+                                        if (horizontalInside && verticalInside) {
+                                                // We know that both are negative, so the larger of the two is the
+                                                // smallest abs value, and is the one closer to the boundary.
+                                                float horizontalDist = leftDistance * (leftDistance > rightDistance) +
+                                                                       rightDistance * (rightDistance >= leftDistance);
+                                                float verticalDist = topDistance * (topDistance > buttomDistance) +
+                                                                     buttomDistance * (buttomDistance >= topDistance);
+
+                                                // Correction for the circle hitting the corner of the box.
+                                                if (horizontalDist * horizontalDist + verticalDist * verticalDist <
+                                                    radius * radius * 0.5)  // The 0.5 is from trial and error.
+                                                        continue;
+
+                                                float velocity = rigidBody.velocity.length();
+                                                sf::Vector2f direction = transform.location - otherTransform.location;
+
+                                                rigidBody.velocity = direction.normalized() * velocity;
+                                        }
                                 }
 
                                 if (shape.type == ShapeType::PaddleCollider &&
                                     otherShape.type == ShapeType::CircleCollider) {
-                                        // Handle this collision.
-                                        // For the game, its only really the ball(s) that should be updated, so the
-                                        // other can stay static.
+                                        float radius = otherShape.shapeData.circle.radius;
+
+                                        float topDistance = getTopDist(
+                                            otherTransform.location,
+                                            transform.location.y - shape.shapeData.box.height / 2.0f, radius);
+
+                                        float buttomDistance = getButtomDist(
+                                            otherTransform.location,
+                                            transform.location.y + shape.shapeData.box.height / 2.0f, radius);
+
+                                        float leftDistance = getLeftDist(
+                                            otherTransform.location,
+                                            transform.location.x - shape.shapeData.box.width / 2.0f, radius);
+
+                                        float rightDistance = getRightDist(
+                                            otherTransform.location,
+                                            transform.location.x + shape.shapeData.box.width / 2.0f, radius);
+
+                                        bool horizontalInside = (leftDistance < 0 && rightDistance < 0);
+                                        bool verticalInside = (topDistance < 0 && buttomDistance < 0);
+
+                                        // If both are negative, we know we have a collision.
+                                        // If they are not all negative, there is not a collision.
+                                        if (horizontalInside && verticalInside) {
+                                                // We know that both are negative, so the larger of the two is the
+                                                // smallest abs value, and is the one closer to the boundary.
+                                                float horizontalDist = leftDistance * (leftDistance > rightDistance) +
+                                                                       rightDistance * (rightDistance > leftDistance);
+                                                float verticalDist = topDistance * (topDistance > buttomDistance) +
+                                                                     buttomDistance * (buttomDistance > topDistance);
+
+                                                // Correction for the circle hitting the corner of the box.
+                                                if (horizontalDist * horizontalDist + verticalDist * verticalDist <
+                                                    radius * radius * 0.5)  // The 0.5 is from trial and error.
+                                                        continue;
+
+                                                float velocity = otherRigidBody.velocity.length();
+                                                sf::Vector2f direction = otherTransform.location - transform.location;
+
+                                                otherRigidBody.velocity = direction.normalized() * velocity;
+                                        }
                                 }
                         }
                 }

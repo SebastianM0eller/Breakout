@@ -51,7 +51,7 @@ void BreakoutGameLayer::RegisterEntities() {
         m_ECS.AddComponent(paddleEntity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
         m_ECS.AddComponent(paddleEntity, RigidBody({0, 0}));
 
-        CollisionShape paddleShape = {.type = ShapeType::BoxCollider, .shapeData = {.box = {56.0f, 6.0f}}};
+        CollisionShape paddleShape = {.type = ShapeType::PaddleCollider, .shapeData = {.box = {56.0f, 6.0f}}};
         m_ECS.AddComponent(paddleEntity, paddleShape);
 
         HorizontalMovement paddleMovement;
