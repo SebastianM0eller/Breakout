@@ -5,7 +5,7 @@
 
 int main() {
         Engine::Application::ApplicationConfig config;
-        config.WindowViewSize = {400, 300};
+        config.WindowViewSize = {600, 450};
         Engine::Application game(config);
 
         game.PushLayer<BreakoutGameLayer>();
