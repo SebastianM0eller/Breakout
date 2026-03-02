@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
 
 #include "Breakout/BreakoutComponents.h"
 #include "Engine/ECS/ECS.h"
@@ -94,8 +93,8 @@ class BreakoutCollisionSystem : public Engine::System {
                                 RigidBody& otherRigidBody = system.template GetComponent<RigidBody>(other);
                                 CollisionShape& otherShape = system.template GetComponent<CollisionShape>(other);
 
-                                // Check collisions.
-
+                                // We skip the Paddle-Paddle, Paddle-Box, Box-Paddle and Box-Box due to the nature of
+                                // the game.
                                 if (shape.type == otherShape.type)
                                         continue;  // Due to the nature of the
                                                    // game, this does nothing.
@@ -221,22 +220,34 @@ class BreakoutCollisionSystem : public Engine::System {
                                                 float verticalDist = topDistance * (topDistance > buttomDistance) +
                                                                      buttomDistance * (buttomDistance > topDistance);
 
-                                                // If we are closer to the vertical edge, we assume the collision
-                                                // happened there, and vice versa.
-                                                otherRigidBody.velocity.x *= 1 - 2 * (horizontalDist > verticalDist);
-                                                otherRigidBody.velocity.y *= 1 - 2 * (verticalDist > horizontalDist);
+                                                // Correction for the circle hitting the corner of the box.
+                                                if (horizontalDist * horizontalDist + verticalDist * verticalDist <
+                                                    radius * radius * 0.5)  // The 0.5 is from trial and error.
+                                                        continue;
 
-                                                // Places the ball at the edge of the edge it collided with.
-                                                // This avoid the ball getting stuck in the wall, bouncing constantly.
-                                                otherTransform.location.x +=
-                                                    (leftDistance * (leftDistance > rightDistance) -
-                                                     rightDistance * (rightDistance >= leftDistance)) *
-                                                    (horizontalDist > verticalDist);
+                                                // Closer to the top, and moving down.
+                                                bool topVelChange =
+                                                    (topDistance > buttomDistance) && (otherRigidBody.velocity.y > 0);
 
-                                                otherTransform.location.y +=
-                                                    (topDistance * (topDistance > buttomDistance) -
-                                                     buttomDistance * (buttomDistance >= topDistance)) *
-                                                    (verticalDist > horizontalDist);
+                                                // Closer to the buttom, and moving up.
+                                                bool butVelChange =
+                                                    (topDistance < buttomDistance) && (otherRigidBody.velocity.y < 0);
+
+                                                // Closer to the left, and moving to the right.
+                                                bool leftVelChange =
+                                                    (leftDistance > rightDistance) && (otherRigidBody.velocity.x > 0);
+
+                                                // Closer to the right, and moving to the left.
+                                                bool rightVelChange =
+                                                    (leftDistance < rightDistance) && (otherRigidBody.velocity.x < 0);
+
+                                                bool horizontalVelChange = (horizontalDist > verticalDist);
+                                                bool verticalVelChange = (verticalDist > horizontalDist);
+
+                                                otherRigidBody.velocity.x *=
+                                                    1 - 2 * ((leftVelChange || rightVelChange) && horizontalVelChange);
+                                                otherRigidBody.velocity.y *=
+                                                    1 - 2 * ((topVelChange || butVelChange) && verticalVelChange);
                                         }
                                 }
 
@@ -253,9 +264,6 @@ class BreakoutCollisionSystem : public Engine::System {
                                         // For the game, its only really the ball(s) that should be updated, so the
                                         // other can stay static.
                                 }
-
-                                // We skip the Paddle-Paddle, Paddle-Box, Box-Paddle and Box-Box due to the nature of
-                                // the game.
                         }
                 }
         }
