@@ -363,47 +363,6 @@ class BreakoutCollisionSystem : public Engine::System {
         }
 };
 
-class BreakoutPaddleMovementSystem : public Engine::System {
-       public:
-        template <uint8_t ComponentCount, uint32_t EntityCount>
-        void OnUpdate(float deltaTime, Engine::ECS<ComponentCount, EntityCount>& system) {
-                for (auto const entity : m_Entities) {
-                        Transform& transform = system.template GetComponent<Transform>(entity);
-                        HorizontalMovement& horizontalMovement =
-                            system.template GetComponent<HorizontalMovement>(entity);
-
-                        bool moveLeft = false;
-                        bool moveRight = false;
-
-                        for (const auto key : horizontalMovement.moveLeftKeys) {
-                                moveLeft = (moveLeft || sf::Keyboard::isKeyPressed(key));
-                        }
-                        for (const auto key : horizontalMovement.moveRightKeys) {
-                                moveRight = (moveRight || sf::Keyboard::isKeyPressed(key));
-                        }
-
-                        transform.location.x += (moveRight - moveLeft) * horizontalMovement.movementSpeed * deltaTime;
-                }
-        }
-
-        ///
-        /// Used to easily register the system.
-        /// This is only safe to use if the individual Components are already registered.
-        /// If they are not, it may result in undefined behaviour.
-        ///
-        template <uint8_t ComponentCount, uint32_t EntityCount>
-        static void RegisterSelf(Engine::ECS<ComponentCount, EntityCount>& system) {
-                using Signature = std::bitset<ComponentCount>;
-
-                Signature signature;
-                signature.set(system.template GetComponentType<HorizontalMovement>(), true);
-                signature.set(system.template GetComponentType<Transform>(), true);
-
-                system.template RegisterSystem<BreakoutPaddleMovementSystem>();
-                system.template SetSystemSignature<BreakoutPaddleMovementSystem>(signature);
-        }
-};
-
 class BreakoutRenderSpritesSystem : public Engine::System {
        public:
         template <uint8_t ComponentCount, uint32_t EntityCount>
