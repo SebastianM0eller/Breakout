@@ -47,3 +47,8 @@ struct Transform {
 struct RigidBody {
         sf::Vector2f velocity;
 };
+
+///
+/// A tag that indicated an entity is the player.
+///
+struct Player {};

@@ -22,6 +22,7 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<CollisionShape>();
         m_ECS.RegisterComponent<Transform>();
         m_ECS.RegisterComponent<Sprite>();
+        m_ECS.RegisterComponent<Player>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
@@ -29,6 +30,7 @@ void BreakoutGameLayer::RegisterSystems() {
         BreakoutUpdateEntityLocationSystem::RegisterSelf(m_ECS);
         BreakoutRenderSpritesSystem::RegisterSelf(m_ECS);
         BreakoutCollisionSystem::RegisterSelf(m_ECS);
+        PlayerMovementSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
@@ -48,6 +50,7 @@ void BreakoutGameLayer::RegisterEntities() {
         m_ECS.AddComponent(paddleEntity, Transform({viewSize.x / 2.0f, viewSize.y - 45}));
         m_ECS.AddComponent(paddleEntity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
         m_ECS.AddComponent(paddleEntity, RigidBody({0, 0}));
+        m_ECS.AddComponent(paddleEntity, Player{});
 
         CollisionShape paddleShape = {.type = ShapeType::PaddleCollider, .shapeData = {.box = {56.0f, 6.0f}}};
         m_ECS.AddComponent(paddleEntity, paddleShape);
@@ -84,6 +87,7 @@ void BreakoutGameLayer::RegisterEntities() {
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
+        m_ECS.GetSystem<PlayerMovementSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<BreakoutPhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<BreakoutCollisionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<BreakoutUpdateEntityLocationSystem>()->OnUpdate(m_ECS);
