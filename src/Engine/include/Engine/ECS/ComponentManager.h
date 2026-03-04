@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 
 #include "Engine/ECS/Component.h"
@@ -49,7 +50,12 @@ void ComponentManager<EntityCount>::RegisterComponent() {
                "Registering same component more than once");
 
         m_ComponentTypes.insert({typeName, m_NextComponentType});
-        m_ComponentArrays.insert({typeName, std::make_shared<ComponentArray<T, EntityCount>>()});
+
+        // Only add the component array if is contains data.
+        // Saves EntityCount Bytes
+        if constexpr (!std::is_empty_v<T>) {
+                m_ComponentArrays.insert({typeName, std::make_shared<ComponentArray<T, EntityCount>>()});
+        }
 
         m_NextComponentType++;
 }
@@ -76,7 +82,10 @@ ComponentType ComponentManager<EntityCount>::GetComponentType() {
 template <uint32_t EntityCount>
 template <typename T>
 void ComponentManager<EntityCount>::AddComponent(Entity entity, T component) {
-        GetComponentArray<T>()->InsertData(entity, component);
+        // If the struct is empty, it has no corrosponding array.
+        if constexpr (!std::is_empty_v<T>) {
+                GetComponentArray<T>()->InsertData(entity, component);
+        }
 }
 
 ///
@@ -86,7 +95,10 @@ void ComponentManager<EntityCount>::AddComponent(Entity entity, T component) {
 template <uint32_t EntityCount>
 template <typename T>
 void ComponentManager<EntityCount>::RemoveComponent(Entity entity) {
-        GetComponentArray<T>()->RemoveData(entity);
+        // If the struct is empty, is has no corrosponding array.
+        if constexpr (!std::is_empty_v<T>) {
+                GetComponentArray<T>()->RemoveData(entity);
+        }
 }
 
 ///
@@ -96,6 +108,7 @@ void ComponentManager<EntityCount>::RemoveComponent(Entity entity) {
 template <uint32_t EntityCount>
 template <typename T>
 T& ComponentManager<EntityCount>::GetComponent(Entity entity) {
+        static_assert(!std::is_empty_v<T>, "Can't retrieve data for an empty struct");
         return GetComponentArray<T>()->GetData(entity);
 }
 
