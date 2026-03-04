@@ -40,7 +40,7 @@ void BreakoutGameLayer::RegisterEntities() {
         Engine::Entity entity = m_ECS.CreateEntity();
         m_ECS.AddComponent(entity, Transform({viewSize.x / 2.0f, viewSize.y - 60}));
         m_ECS.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
-        m_ECS.AddComponent(entity, RigidBody({59, -150}));
+        m_ECS.AddComponent(entity, RigidBody({0, -200}));
 
         CollisionShape circleShape = {.type = ShapeType::CircleCollider, .shapeData = {.circle = {8.0f}}};
         m_ECS.AddComponent(entity, circleShape);
