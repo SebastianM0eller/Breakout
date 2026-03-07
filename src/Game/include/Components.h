@@ -3,7 +3,19 @@
 #include <array>
 #include <cstdint>
 
+#include "Engine/ECS/Entity.h"
+
 namespace Breakout {
+
+///
+/// The Physics tags. The PHYSICS_COUNT gives us the amount of types.
+///
+enum PhysicsTag : uint8_t {
+        PHYSICS_BALL,
+        PHYSICS_WALL,
+        PHYSICS_PADDLE,
+        PHYSICS_COUNT,
+};
 
 ///
 /// The shape tags. The SHAPE_TYPE_COUNT gives us the amount of types.
@@ -33,6 +45,7 @@ struct ColliderComponent {
                 RectangleData rect;
         };
         ShapeType type;
+        PhysicsTag tag;
 };
 
 struct WorldCollider {
@@ -42,6 +55,7 @@ struct WorldCollider {
 
 struct CollisionResult {
         sf::Vector2f normal;
+        Engine::Entity other;
         float penetrationDepth;
         bool isColliding;
 };

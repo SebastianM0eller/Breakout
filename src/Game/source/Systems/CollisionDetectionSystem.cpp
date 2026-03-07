@@ -1,4 +1,4 @@
-#include "Systems/CollisionSystem.h"
+#include "Systems/CollisionDetectionSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -6,8 +6,8 @@
 #include "Components.h"
 #include "SFML/System/Vector2.hpp"
 
-Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleCircle(const Breakout::WorldCollider& a,
-                                                                         const Breakout::WorldCollider& b) {
+Breakout::CollisionResult Breakout::CollisionDetectionSystem::CollideCircleCircle(const Breakout::WorldCollider& a,
+                                                                                  const Breakout::WorldCollider& b) {
         // Get the vector from b to a.
         sf::Vector2f difference = a.transform.location - b.transform.location;
 
@@ -16,7 +16,7 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleCircle(const B
         float radiiSumSQ = radiiSum * radiiSum;
 
         // Early exit, check if they are not overlapping.
-        if (DifferenceDistanceSQ > radiiSumSQ) return {{0.0f, 0.0f}, 0.0f, false};
+        if (DifferenceDistanceSQ > radiiSumSQ) return {{0.0f, 0.0f}, 0, 0.0f, false};
 
         // We now know we are colliding.
 
@@ -24,11 +24,11 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleCircle(const B
         float depth = radiiSum - distance;
         sf::Vector2f normal = difference / distance;
 
-        return {normal, depth, true};
+        return {normal, 0, depth, true};
 }
 
-Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleRect(const Breakout::WorldCollider& a,
-                                                                       const Breakout::WorldCollider& b) {
+Breakout::CollisionResult Breakout::CollisionDetectionSystem::CollideCircleRect(const Breakout::WorldCollider& a,
+                                                                                const Breakout::WorldCollider& b) {
         // Get the vector from the rect to the circle.
         sf::Vector2f difference = a.transform.location - b.transform.location;
 
@@ -40,7 +40,7 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleRect(const Bre
         clamped.x = std::clamp(difference.x, -halfWidth, halfWidth);
         clamped.y = std::clamp(difference.y, -halfHeight, halfHeight);
 
-        sf::Vector2f closestPoint = b.transform.location - clamped;
+        sf::Vector2f closestPoint = b.transform.location + clamped;
 
         // Update the difference based on the closest point.
         difference = a.transform.location - closestPoint;
@@ -50,7 +50,7 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleRect(const Bre
         float radiusSQ = radius * radius;
 
         // Early exit, check if the closes point is not within the circle.
-        if (distanceSQ > radiusSQ) return {{0.0f, 0.0f}, 0.0f, false};
+        if (distanceSQ > radiusSQ) return {{0.0f, 0.0f}, 0, 0.0f, false};
 
         // We now know we are colliding.
 
@@ -58,11 +58,11 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideCircleRect(const Bre
         float depth = radius - distance;
         sf::Vector2f normal = difference / distance;
 
-        return {normal, depth, true};
+        return {normal, 0, depth, true};
 }
 
-Breakout::CollisionResult Breakout::CollisionSystem::CollideRectCircle(const Breakout::WorldCollider& a,
-                                                                       const Breakout::WorldCollider& b) {
+Breakout::CollisionResult Breakout::CollisionDetectionSystem::CollideRectCircle(const Breakout::WorldCollider& a,
+                                                                                const Breakout::WorldCollider& b) {
         // Get the result.
         CollisionResult result = CollideCircleRect(b, a);
 
@@ -72,8 +72,8 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideRectCircle(const Bre
         return result;
 }
 
-Breakout::CollisionResult Breakout::CollisionSystem::CollideRectRect(const Breakout::WorldCollider& a,
-                                                                     const Breakout::WorldCollider& b) {
+Breakout::CollisionResult Breakout::CollisionDetectionSystem::CollideRectRect(const Breakout::WorldCollider& a,
+                                                                              const Breakout::WorldCollider& b) {
         // Get the vector from b to a.
         sf::Vector2f difference = a.transform.location - b.transform.location;
 
@@ -87,14 +87,14 @@ Breakout::CollisionResult Breakout::CollisionSystem::CollideRectRect(const Break
         float yOverlap = (aHalfHeight + bHalfHeight) - std::abs(difference.y);
 
         // Early exit, check if they overlap.
-        if (xOverlap <= 0 || yOverlap <= 0) return {{0.0f, 0.0f}, 0.0f, false};
+        if (xOverlap <= 0 || yOverlap <= 0) return {{0.0f, 0.0f}, 0, 0.0f, false};
 
         // We now know we are colliding.
         if (xOverlap < yOverlap)
-                return (difference.x > 0.0f) ? Breakout::CollisionResult({1.0f, 0.0f}, xOverlap, true)
-                                             : Breakout::CollisionResult({-1.0f, 0.0f}, xOverlap, true);
+                return (difference.x > 0.0f) ? Breakout::CollisionResult({1.0f, 0.0f}, 0, xOverlap, true)
+                                             : Breakout::CollisionResult({-1.0f, 0.0f}, 0, xOverlap, true);
 
         else
-                return (difference.y > 0.0f) ? Breakout::CollisionResult{{0.0f, 1.0f}, yOverlap, true}
-                                             : Breakout::CollisionResult{{0.0f, -1.0f}, yOverlap, true};
+                return (difference.y > 0.0f) ? Breakout::CollisionResult{{0.0f, 1.0f}, 0, yOverlap, true}
+                                             : Breakout::CollisionResult{{0.0f, -1.0f}, 0, yOverlap, true};
 }

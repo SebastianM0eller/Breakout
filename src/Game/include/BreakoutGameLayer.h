@@ -3,11 +3,10 @@
 #include <Engine/ECS/ECS.h>
 #include <Engine/Layer.h>
 
-#include <bitset>
+#include "BreakoutECS.h"
 
 class BreakoutGameLayer : public Engine::Layer {
        public:
-        using Signature = std::bitset<32>;  // Needs to be the same as the Component Count for m_ECS.
         BreakoutGameLayer();
         ~BreakoutGameLayer() = default;
 
@@ -15,7 +14,7 @@ class BreakoutGameLayer : public Engine::Layer {
         void OnRender() override;
 
        private:
-        Engine::ECS<32, 512> m_ECS;  // <Component Count, Entity Count>
+        BreakoutECS m_ECS;  // <Component Count, Entity Count>
 
         void RegisterComponents();
         void RegisterSystems();

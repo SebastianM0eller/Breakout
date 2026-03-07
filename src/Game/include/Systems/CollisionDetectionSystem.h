@@ -3,27 +3,26 @@
 
 #include <cstdint>
 
+#include "BreakoutECS.h"
 #include "Components.h"
-#include "Engine/ECS/System.h"
 
 namespace Breakout {
-class CollisionSystem : public Engine::System {
+class CollisionDetectionSystem : public Engine::System {
        public:
-        template <uint8_t ComponentCount, uint32_t EntityCount>
-        void OnUpdate(Engine::ECS<ComponentCount, EntityCount>& system) {
+        void OnUpdate(BreakoutECS& system) {
                 for (auto iteratorA = m_Entities.begin(); iteratorA != m_Entities.end(); iteratorA++) {
                         auto iteratorB = iteratorA;
                         iteratorB++;  // Increment to avoid checking collision with yourself.
 
                         uint32_t a = *iteratorA;
-                        Transform& aTransform = system.template GetComponent<Transform>(a);
-                        ColliderComponent& aShape = system.template GetComponent<ColliderComponent>(a);
+                        Transform& aTransform = system.GetComponent<Transform>(a);
+                        ColliderComponent& aShape = system.GetComponent<ColliderComponent>(a);
 
                         for (; iteratorB != m_Entities.end(); iteratorB++) {
                                 uint32_t b = *iteratorB;
 
-                                Transform& bTransform = system.template GetComponent<Transform>(b);
-                                ColliderComponent& bShape = system.template GetComponent<ColliderComponent>(b);
+                                Transform& bTransform = system.GetComponent<Transform>(b);
+                                ColliderComponent& bShape = system.GetComponent<ColliderComponent>(b);
 
                                 WorldCollider aWorld = {aShape, aTransform};
                                 WorldCollider bWorld = {bShape, bTransform};
@@ -34,8 +33,11 @@ class CollisionSystem : public Engine::System {
                                         CollisionResult otherResult = result;
                                         otherResult.normal = -otherResult.normal;
 
-                                        CollisionEvents& aEvents = system.template GetComponent<CollisionEvents>(a);
-                                        CollisionEvents& bEvents = system.template GetComponent<CollisionEvents>(b);
+                                        result.other = b;
+                                        otherResult.other = a;
+
+                                        CollisionEvents& aEvents = system.GetComponent<CollisionEvents>(a);
+                                        CollisionEvents& bEvents = system.GetComponent<CollisionEvents>(b);
 
                                         if (aEvents.eventCount < 4) {
                                                 aEvents.hits[aEvents.eventCount] = result;
@@ -51,17 +53,14 @@ class CollisionSystem : public Engine::System {
                 }
         }
 
-        template <uint8_t ComponentCount, uint32_t EntityCount>
-        void RegisterSelf(Engine::ECS<ComponentCount, EntityCount>& system) {
-                using Signature = std::bitset<ComponentCount>;
+        static void RegisterSelf(BreakoutECS& system) {
+                BreakoutSignature signature;
+                signature.set(system.GetComponentType<ColliderComponent>(), true);
+                signature.set(system.GetComponentType<CollisionEvents>(), true);
+                signature.set(system.GetComponentType<Transform>(), true);
 
-                Signature signature;
-                signature.set(system.template GetComponentType<ColliderComponent>(), true);
-                signature.set(system.template GetComponentType<CollisionEvents>(), true);
-                signature.set(system.template GetComponentType<Transform>(), true);
-
-                system.template RegisterSystem<CollisionSystem>();
-                system.template SetSystemSignature<CollisionSystem>(signature);
+                system.RegisterSystem<CollisionDetectionSystem>();
+                system.SetSystemSignature<CollisionDetectionSystem>(signature);
         }
 
        private:
