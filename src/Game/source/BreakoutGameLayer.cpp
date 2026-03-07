@@ -1,14 +1,12 @@
 #include "BreakoutGameLayer.h"
 
-#include "Breakout/BreakoutSystems.h"
-#include "Components.h"
-#include "Engine/ECS/Entity.h"
-#include "Engine/Renderer.h"
-#include "Engine/Resources/Texture.h"
-#include "SFML/System/Vector2.hpp"
-#include "SFML/Window/Keyboard.hpp"
+// Systems
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
+#include "Systems/LocationSyncSystem.h"
+#include "Systems/PhysicsSystem.h"
+#include "Systems/PlayerMovementSystem.h"
+#include "Systems/RenderSystem.h"
 
 BreakoutGameLayer::BreakoutGameLayer() {
         m_ECS.Init();
@@ -27,10 +25,10 @@ void BreakoutGameLayer::RegisterComponents() {
 }
 
 void BreakoutGameLayer::RegisterSystems() {
-        BreakoutPhysicsSystem::RegisterSelf(m_ECS);
-        BreakoutUpdateEntityLocationSystem::RegisterSelf(m_ECS);
-        BreakoutRenderSpritesSystem::RegisterSelf(m_ECS);
-        PlayerMovementSystem::RegisterSelf(m_ECS);
+        Breakout::PhysicsSystem::RegisterSelf(m_ECS);
+        Breakout::LocationSyncSystem::RegisterSelf(m_ECS);
+        Breakout::RenderSystem::RegisterSelf(m_ECS);
+        Breakout::PlayerMovementSystem::RegisterSelf(m_ECS);
         Breakout::CollisionDetectionSystem::RegisterSelf(m_ECS);
         Breakout::CollisionResolutionSystem::RegisterSelf(m_ECS);
 }
@@ -110,11 +108,11 @@ void BreakoutGameLayer::RegisterEntities() {
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
-        m_ECS.GetSystem<PlayerMovementSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<BreakoutPhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
+        m_ECS.GetSystem<Breakout::PlayerMovementSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<BreakoutUpdateEntityLocationSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
 }
 
-void BreakoutGameLayer::OnRender() { m_ECS.GetSystem<BreakoutRenderSpritesSystem>()->OnRender(m_ECS); }
+void BreakoutGameLayer::OnRender() { m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS); }
