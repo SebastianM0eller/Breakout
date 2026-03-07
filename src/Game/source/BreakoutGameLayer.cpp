@@ -1,6 +1,5 @@
 #include "BreakoutGameLayer.h"
 
-#include "Breakout/BreakoutComponents.h"
 #include "Breakout/BreakoutSystems.h"
 #include "Components.h"
 #include "Engine/ECS/Entity.h"
@@ -19,12 +18,10 @@ BreakoutGameLayer::BreakoutGameLayer() {
 }
 
 void BreakoutGameLayer::RegisterComponents() {
-        m_ECS.RegisterComponent<RigidBody>();
-        m_ECS.RegisterComponent<Transform>();
-        m_ECS.RegisterComponent<Sprite>();
-        m_ECS.RegisterComponent<Player>();
-        m_ECS.RegisterComponent<CollisionShape>();
+        m_ECS.RegisterComponent<Breakout::RigidBody>();
         m_ECS.RegisterComponent<Breakout::Transform>();
+        m_ECS.RegisterComponent<Breakout::Sprite>();
+        m_ECS.RegisterComponent<Breakout::Player>();
         m_ECS.RegisterComponent<Breakout::ColliderComponent>();
         m_ECS.RegisterComponent<Breakout::CollisionEvents>();
 }
@@ -44,8 +41,8 @@ void BreakoutGameLayer::RegisterEntities() {
         // Add the ball
         Engine::Entity entity = m_ECS.CreateEntity();
         m_ECS.AddComponent(entity, Breakout::Transform({viewSize.x / 2.0f, viewSize.y - 60}));
-        m_ECS.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
-        m_ECS.AddComponent(entity, RigidBody({0, -200}));
+        m_ECS.AddComponent(entity, Breakout::Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
+        m_ECS.AddComponent(entity, Breakout::RigidBody({0, -200}));
         m_ECS.AddComponent(entity, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent circleCollider = {
@@ -55,9 +52,10 @@ void BreakoutGameLayer::RegisterEntities() {
         // Add the paddle
         Engine::Entity paddleEntity = m_ECS.CreateEntity();
         m_ECS.AddComponent(paddleEntity, Breakout::Transform({viewSize.x / 2.0f, viewSize.y - 45}));
-        m_ECS.AddComponent(paddleEntity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
-        m_ECS.AddComponent(paddleEntity, RigidBody({0, 0}));
-        m_ECS.AddComponent(paddleEntity, Player{});
+        m_ECS.AddComponent(paddleEntity,
+                           Breakout::Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
+        m_ECS.AddComponent(paddleEntity, Breakout::RigidBody({0, 0}));
+        m_ECS.AddComponent(paddleEntity, Breakout::Player{});
         m_ECS.AddComponent(paddleEntity, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent paddleCollider = {
@@ -70,7 +68,7 @@ void BreakoutGameLayer::RegisterEntities() {
         // Add the walls.
         Engine::Entity topWall = m_ECS.CreateEntity();
         m_ECS.AddComponent(topWall, Breakout::Transform({viewSize.x / 2.0f, 0.1f}));
-        m_ECS.AddComponent(topWall, RigidBody({0, 0}));
+        m_ECS.AddComponent(topWall, Breakout::RigidBody({0, 0}));
         m_ECS.AddComponent(topWall, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent topShape = {.rect = {viewSize.x, 0},
@@ -80,7 +78,7 @@ void BreakoutGameLayer::RegisterEntities() {
 
         Engine::Entity leftWall = m_ECS.CreateEntity();
         m_ECS.AddComponent(leftWall, Breakout::Transform({0.1f, viewSize.y / 2.0f}));
-        m_ECS.AddComponent(leftWall, RigidBody({0, 0}));
+        m_ECS.AddComponent(leftWall, Breakout::RigidBody({0, 0}));
         m_ECS.AddComponent(leftWall, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent leftShape = {.rect = {0, viewSize.y},
@@ -90,7 +88,7 @@ void BreakoutGameLayer::RegisterEntities() {
 
         Engine::Entity buttomWall = m_ECS.CreateEntity();
         m_ECS.AddComponent(buttomWall, Breakout::Transform({viewSize.x / 2.0f, viewSize.y}));
-        m_ECS.AddComponent(buttomWall, RigidBody({0, 0}));
+        m_ECS.AddComponent(buttomWall, Breakout::RigidBody({0, 0}));
         m_ECS.AddComponent(buttomWall, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent buttomShape = {.rect = {viewSize.x, 0.1f},
@@ -101,7 +99,7 @@ void BreakoutGameLayer::RegisterEntities() {
 
         Engine::Entity rightWall = m_ECS.CreateEntity();
         m_ECS.AddComponent(rightWall, Breakout::Transform({viewSize.x, viewSize.y / 2.0f}));
-        m_ECS.AddComponent(rightWall, RigidBody({0, 0}));
+        m_ECS.AddComponent(rightWall, Breakout::RigidBody({0, 0}));
         m_ECS.AddComponent(rightWall, Breakout::CollisionEvents{{}, 0});
 
         Breakout::ColliderComponent rightShape = {.rect = {0.1f, viewSize.y},

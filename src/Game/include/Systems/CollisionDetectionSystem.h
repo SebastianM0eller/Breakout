@@ -7,6 +7,12 @@
 #include "Components.h"
 
 namespace Breakout {
+
+struct WorldCollider {
+        ColliderComponent& shape;
+        Transform& transform;
+};
+
 class CollisionDetectionSystem : public Engine::System {
        public:
         void OnUpdate(BreakoutECS& system) {

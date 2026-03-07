@@ -1,6 +1,5 @@
 #include "Systems/CollisionResolutionSystem.h"
 
-#include "Breakout/BreakoutComponents.h"
 #include "SFML/System/Vector2.hpp"
 
 void Breakout::CollisionResolutionSystem::BasicBounce(const Engine::Entity entity, const CollisionResult& hit,

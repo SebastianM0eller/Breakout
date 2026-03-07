@@ -4,8 +4,26 @@
 #include <cstdint>
 
 #include "Engine/ECS/Entity.h"
+#include "Engine/Resources/Texture.h"
 
 namespace Breakout {
+
+struct Player {};
+
+struct Transform {
+        sf::Vector2f location;
+};
+
+struct RigidBody {
+        sf::Vector2f velocity;
+};
+
+///
+/// Automatically manages the Texture resource.
+///
+struct Sprite {
+        Engine::ManagedSprite sprite;
+};
 
 ///
 /// The Physics tags. The PHYSICS_COUNT gives us the amount of types.
@@ -35,10 +53,6 @@ struct RectangleData {
         float height;
 };
 
-struct Transform {
-        sf::Vector2f location;
-};
-
 struct ColliderComponent {
         union {
                 CircleData circle;
@@ -46,11 +60,6 @@ struct ColliderComponent {
         };
         ShapeType type;
         PhysicsTag tag;
-};
-
-struct WorldCollider {
-        ColliderComponent& shape;
-        Transform& transform;
 };
 
 struct CollisionResult {
