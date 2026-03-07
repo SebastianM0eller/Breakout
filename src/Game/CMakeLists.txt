@@ -8,6 +8,7 @@ target_include_directories(Game PUBLIC
 
 target_sources(Game PRIVATE
   source/BreakoutGameLayer.cpp
+  source/Systems/CollisionSystem.cpp
 )
 
 
