@@ -42,21 +42,8 @@ void BreakoutGameLayer::RegisterEntities() {
         Breakout::RigidBody ballSpeed({0, -200});
         Breakout::RegisterBall(m_ECS, ballLocation, ballSpeed);
 
-        // Add the paddle
-        Engine::Entity paddleEntity = m_ECS.CreateEntity();
-        m_ECS.AddComponent(paddleEntity, Breakout::Transform({viewSize.x / 2.0f, viewSize.y - 45}));
-        m_ECS.AddComponent(paddleEntity,
-                           Breakout::Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
-        m_ECS.AddComponent(paddleEntity, Breakout::RigidBody({0, 0}));
-        m_ECS.AddComponent(paddleEntity, Breakout::Player{});
-        m_ECS.AddComponent(paddleEntity, Breakout::CollisionEvents{{}, 0});
-
-        Breakout::ColliderComponent paddleCollider = {
-            .rect = {56.0f, 6.0f},
-            .type = Breakout::ShapeType::SHAPE_RECTANGLE,
-            .tag = Breakout::PhysicsTag::PHYSICS_PADDLE,
-        };
-        m_ECS.AddComponent(paddleEntity, paddleCollider);
+        Breakout::Transform paddleLocation({viewSize.x / 2.0f, viewSize.y - 45});
+        Breakout::RegisterPaddle(m_ECS, paddleLocation);
 
         // Add the walls.
         Engine::Entity topWall = m_ECS.CreateEntity();

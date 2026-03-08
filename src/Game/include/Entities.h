@@ -2,9 +2,10 @@
 
 #include "BreakoutECS.h"
 #include "Components.h"
+#include "SFML/System/Vector2.hpp"
 
 namespace Breakout {
-void RegisterBall(BreakoutECS& system, Transform& transform, RigidBody& rigidBody);
-void RegisterPaddle(BreakoutECS& system);
-void RegisterWalls(BreakoutECS& system);
+void RegisterBall(BreakoutECS& system, const Transform& transform, const RigidBody& rigidBody);
+void RegisterPaddle(BreakoutECS& system, const Transform& transsform);
+void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize);
 }  // namespace Breakout
