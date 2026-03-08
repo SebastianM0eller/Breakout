@@ -34,6 +34,18 @@
       }
     },
     {
+      "name": "profile-perf",
+      "displayName": "Profile Build (perf/Callgrind)",
+      "description": "Optimized with debug symbols and frame pointers",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "OFF",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O3 -g -fno-omit-frame-pointer -DNDEBUG",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-O3 -g -fno-omit-frame-pointer -DNDEBUG"
+      }
+    },
+    {
       "name": "windows-release",
       "displayName": "Windows Release (MinGW)",
       "description": "Cross-compile for Windows using MinGW",
@@ -58,6 +70,10 @@
     {
       "name": "windows-release",
       "configurePreset": "windows-release"
+    },
+    {
+      "name": "profile-perf",
+      "configurePreset": "profile-perf"
     }
   ]
 }
