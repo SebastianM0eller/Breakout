@@ -2,6 +2,7 @@
 
 #include "BreakoutECS.h"
 #include "Components.h"
+#include "SFML/System/Vector2.hpp"
 
 namespace Breakout {
 
@@ -30,10 +31,48 @@ void RegisterPaddle(BreakoutECS& system, const Transform& transform) {
         system.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
 }
 
+Breakout::ColliderComponent WallCollider({.rect = {0.0f, 0.0f}, .type = SHAPE_RECTANGLE, .tag = PHYSICS_WALL});
+Breakout::CollisionEvents WallsCollisionEvents({{}, 0});
+
 void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
-        const BreakoutEntity entity = system.CreateEntity();
+        // Register the entities.
+        BreakoutEntity entities[4];
+        for (uint8_t idx = 0; idx < 4; idx++) {
+                entities[idx] = system.CreateEntity();
+        }
 
         float halfWidth = viewSize.x / 2.0f;
         float halfHeight = viewSize.y / 2.0f;
+
+        sf::Vector2f location[4] = {
+            {viewSize.x, halfHeight},  // Right
+            {halfWidth, 0},            // Top
+            {0, halfHeight},           // Left
+            {halfWidth, viewSize.y}    // Bottom
+        };
+
+        sf::Vector2f velocity[4] = {
+            {0, 0},  // Right
+            {0, 0},  // Top
+            {0, 0},  // Left
+            {0, 0}   // Bottom
+        };
+
+        sf::Vector2f rectSize[4] = {
+            {0, viewSize.y},  // Right
+            {viewSize.x, 0},  // Top
+            {0, viewSize.y},  // Left
+            {viewSize.x, 0}   // Bottom
+        };
+
+        for (uint8_t idx = 0; idx < 4; idx++) {
+                system.AddComponent(entities[idx], Transform(location[idx]));
+                system.AddComponent(entities[idx], RigidBody(velocity[idx]));
+                system.AddComponent(entities[idx], WallsCollisionEvents);
+
+                WallCollider.rect.width = rectSize[idx].x;
+                WallCollider.rect.height = rectSize[idx].y;
+                system.AddComponent(entities[idx], WallCollider);
+        }
 }
 }  // namespace Breakout
