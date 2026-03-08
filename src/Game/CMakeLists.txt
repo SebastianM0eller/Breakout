@@ -10,6 +10,7 @@ target_sources(Game PRIVATE
   source/BreakoutGameLayer.cpp
   source/Systems/CollisionDetectionSystem.cpp
   source/Systems/CollisionResolutionSystem.cpp
+  source/Entities.cpp
 )
 
 

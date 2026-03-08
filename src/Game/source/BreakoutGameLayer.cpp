@@ -1,6 +1,8 @@
 #include "BreakoutGameLayer.h"
 
 // Systems
+#include "Components.h"
+#include "Entities.h"
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
 #include "Systems/LocationSyncSystem.h"
@@ -36,16 +38,9 @@ void BreakoutGameLayer::RegisterSystems() {
 void BreakoutGameLayer::RegisterEntities() {
         sf::Vector2f viewSize = Engine::Renderer::Get().GetViewSize();
 
-        // Add the ball
-        Engine::Entity entity = m_ECS.CreateEntity();
-        m_ECS.AddComponent(entity, Breakout::Transform({viewSize.x / 2.0f, viewSize.y - 60}));
-        m_ECS.AddComponent(entity, Breakout::Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
-        m_ECS.AddComponent(entity, Breakout::RigidBody({0, -200}));
-        m_ECS.AddComponent(entity, Breakout::CollisionEvents{{}, 0});
-
-        Breakout::ColliderComponent circleCollider = {
-            .circle = {8.0f}, .type = Breakout::ShapeType::SHAPE_CIRCLE, .tag = Breakout::PhysicsTag::PHYSICS_BALL};
-        m_ECS.AddComponent(entity, circleCollider);
+        Breakout::Transform ballLocation({viewSize.x / 2.0f, viewSize.y - 60.0f});
+        Breakout::RigidBody ballSpeed({0, -200});
+        Breakout::RegisterBall(m_ECS, ballLocation, ballSpeed);
 
         // Add the paddle
         Engine::Entity paddleEntity = m_ECS.CreateEntity();
