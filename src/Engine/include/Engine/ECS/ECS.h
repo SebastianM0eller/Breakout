@@ -5,6 +5,7 @@
 
 #include "Engine/ECS/ComponentManager.h"
 #include "Engine/ECS/Entity.h"
+#include "Engine/ECS/EventManager.h"
 #include "Engine/ECS/System.h"
 namespace Engine {
 template <uint8_t ComponentCount, uint32_t EntityCount>
@@ -20,6 +21,7 @@ class ECS {
                 m_ComponentManager = std::make_unique<ComponentManager<EntityCount>>();
                 m_EntityManager = std::make_unique<EntityManager<ComponentCount, EntityCount>>();
                 m_SystemManager = std::make_unique<SystemManager<ComponentCount>>();
+                m_EventManager = std::make_unique<EventManager>();
         }
 
         ///
@@ -123,10 +125,28 @@ class ECS {
                 return m_SystemManager->template GetSystem<T>();
         }
 
+        ///
+        /// Used to register a callback for the given EventType.
+        ///
+        template <typename EventType>
+        void AddListner(std::function<void(const EventType&)> callback) {
+                m_EventManager->AddListner<EventType>(callback);
+        }
+
+        ///
+        /// Distributes the event to the provided listners.
+        /// If there are no listers for the event, nothing happens.
+        ///
+        template <typename EventType>
+        void SendEvent(const EventType& event) {
+                m_EventManager->SendEvent(event);
+        }
+
        private:
         std::unique_ptr<ComponentManager<EntityCount>> m_ComponentManager;
         std::unique_ptr<EntityManager<ComponentCount, EntityCount>> m_EntityManager;
         std::unique_ptr<SystemManager<ComponentCount>> m_SystemManager;
+        std::unique_ptr<EventManager> m_EventManager;
 };
 }  // namespace Engine
 
