@@ -7,9 +7,10 @@
 #include "Systems/BallTrackingSystem.h"
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
+#include "Systems/DestroyedSystem.h"
 #include "Systems/LocationSyncSystem.h"
 #include "Systems/PhysicsSystem.h"
-#include "Systems/PlayerMovementSystem.h"
+#include "Systems/PlayerSystem.h"
 #include "Systems/RenderSystem.h"
 
 BreakoutGameLayer::BreakoutGameLayer() {
@@ -28,17 +29,19 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<Breakout::BallSlots>();
         m_ECS.RegisterComponent<Breakout::ColliderComponent>();
         m_ECS.RegisterComponent<Breakout::CollisionEvents>();
+        m_ECS.RegisterComponent<Breakout::Destroyed>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
         Breakout::PhysicsSystem::RegisterSelf(m_ECS);
         Breakout::LocationSyncSystem::RegisterSelf(m_ECS);
         Breakout::RenderSystem::RegisterSelf(m_ECS);
-        Breakout::PlayerMovementSystem::RegisterSelf(m_ECS);
+        Breakout::PlayerSystem::RegisterSelf(m_ECS);
         Breakout::CollisionDetectionSystem::RegisterSelf(m_ECS);
         Breakout::CollisionResolutionSystem::RegisterSelf(m_ECS);
         Breakout::BallTrackingSystem::RegisterSelf(m_ECS);
         Breakout::BallLifeSystem::RegisterSelf(m_ECS);
+        Breakout::DestroyedSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
@@ -56,11 +59,14 @@ void BreakoutGameLayer::RegisterEntities() {
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
-        m_ECS.GetSystem<Breakout::PlayerMovementSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::PlayerSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(m_ECS);  // Needs to run before the destructive
+                                                                           // systems.
         m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(m_ECS);  // Should always be last or first.
 }
 
 void BreakoutGameLayer::OnRender() { m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS); }

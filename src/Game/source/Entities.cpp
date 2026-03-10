@@ -66,6 +66,11 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
             {viewSize.x, 0}   // Bottom
         };
 
+        PhysicsTag tags[4] = {PHYSICS_WALL,       // Right
+                              PHYSICS_WALL,       // Top
+                              PHYSICS_WALL,       // Left
+                              PHYSICS_KILLWALL};  // Bottom
+
         for (uint8_t idx = 0; idx < 4; idx++) {
                 system.AddComponent(entities[idx], Transform(location[idx]));
                 system.AddComponent(entities[idx], RigidBody(velocity[idx]));
@@ -73,6 +78,7 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
 
                 WallCollider.rect.width = rectSize[idx].x;
                 WallCollider.rect.height = rectSize[idx].y;
+                WallCollider.tag = tags[idx];
                 system.AddComponent(entities[idx], WallCollider);
         }
 }

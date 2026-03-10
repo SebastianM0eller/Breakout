@@ -43,14 +43,15 @@ class CollisionResolutionSystem : public Engine::System {
 
         static void BasicBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
         static void PaddleBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
-        static void IgnoreBounce([[maybe_unused]] const Engine::Entity entity,
-                                 [[maybe_unused]] const CollisionResult& hit, [[maybe_unused]] BreakoutECS& system);
+        static void IgnoreBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
+        static void KillBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
 
         // The first is this this, second is other.
         static constexpr ResponseFunction m_CollisionMatrix[PhysicsTag::PHYSICS_COUNT][PhysicsTag::PHYSICS_COUNT] = {
-            /* This/other        Ball,           Wall,        Paddle */
-            /* Ball,      */ {IgnoreBounce, BasicBounce, PaddleBounce},
-            /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* Paddle     */ {IgnoreBounce, IgnoreBounce, IgnoreBounce}};
+            /* This/other        Ball,           Wall,      KillWall,        Paddle */
+            /* Ball,      */ {IgnoreBounce, BasicBounce, KillBounce, PaddleBounce},
+            /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
+            /* KillWall   */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
+            /* Paddle     */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce}};
 };
 }  // namespace Breakout

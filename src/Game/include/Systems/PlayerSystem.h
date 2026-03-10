@@ -7,9 +7,10 @@
 
 #include "BreakoutECS.h"
 #include "Components.h"
+#include "Events.h"
 
 namespace Breakout {
-class PlayerMovementSystem : public Engine::System {
+class PlayerSystem : public Engine::System {
        public:
         void OnUpdate(BreakoutECS& system) {
                 for (auto const entity : m_Entities) {
@@ -41,13 +42,27 @@ class PlayerMovementSystem : public Engine::System {
                 }
         }
 
+        void AddBallSpawner(BreakoutECS& system) {
+                for (const Engine::Entity entity : m_Entities) {
+                        system.AddComponent(entity, AvailableBallSpawn{});
+                }
+        }
+
         static void RegisterSelf(BreakoutECS& system) {
                 BreakoutSignature signature;
                 signature.set(system.GetComponentType<Breakout::Player>(), true);
-                signature.set(system.GetComponentType<Breakout::RigidBody>(), true);
 
-                system.RegisterSystem<PlayerMovementSystem>();
-                system.SetSystemSignature<PlayerMovementSystem>(signature);
+                auto self = system.RegisterSystem<PlayerSystem>();
+                system.SetSystemSignature<PlayerSystem>(signature);
+
+                // Register the callbacks using a weak_ptr for lifetime.
+                std::weak_ptr<PlayerSystem> weakSelf = self;
+
+                system.AddListner<SpawnBallEvent>([weakSelf, &system](const SpawnBallEvent&) {
+                        if (auto lockedSelf = weakSelf.lock()) {
+                                lockedSelf->AddBallSpawner(system);
+                        }
+                });
         }
 };
 }  // namespace Breakout

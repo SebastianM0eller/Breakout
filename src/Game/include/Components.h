@@ -8,6 +8,8 @@
 
 namespace Breakout {
 
+struct Destroyed {};
+
 struct Player {};
 
 struct Transform {
@@ -31,6 +33,7 @@ struct Sprite {
 enum PhysicsTag : uint8_t {
         PHYSICS_BALL,
         PHYSICS_WALL,
+        PHYSICS_KILLWALL,
         PHYSICS_PADDLE,
         PHYSICS_COUNT,
 };
@@ -79,5 +82,7 @@ struct Ball {};
 struct BallSlots {
         bool empty;
 };
+
+struct AvailableBallSpawn {};
 
 }  // namespace Breakout

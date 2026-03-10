@@ -10,7 +10,7 @@ class LocationSyncSystem : public Engine::System {
                         Transform& transform = system.GetComponent<Transform>(entity);
                         Sprite& sprite = system.GetComponent<Sprite>(entity);
 
-                        sprite.sprite.GetSprite().setPosition(transform.location);
+                        sprite.sprite.SetPosition(transform.location);
                 }
         }
 

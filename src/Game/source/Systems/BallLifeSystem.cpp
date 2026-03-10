@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <iostream>
 
 #include "Components.h"
 #include "Events.h"
@@ -61,9 +62,11 @@ void Breakout::BallLifeSystem::LifeUsed(BreakoutECS& system) {
                 sprite.sprite = Engine::ManagedSprite("assets/Textures/UsedBall.png");
 
                 // If we have more lives, we should spawn a new ball.
-                system.SendEvent(SpawnBall{});
+                system.SendEvent(SpawnBallEvent{});
         } else {
                 // If we have no more lives to lose, the game must be over.
-                system.SendEvent(GameOverEvent{});
+
+                std::cout << "The game should end now :) \n";
+                // system.SendEvent(GameOverEvent{});
         }
 }

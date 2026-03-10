@@ -4,7 +4,8 @@ namespace Breakout {
 
 struct LifeGainedEvent {};
 struct LifeUsedEvent {};
-struct SpawnBall {};
+struct SpawnBallEvent {};
 struct GameOverEvent {};
+struct BallDestroyedEvent {};
 
 }  // namespace Breakout

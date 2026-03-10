@@ -25,7 +25,7 @@ class ECS {
         }
 
         ///
-        /// Used to retrieve the id for an available entity ID.
+        /// Used to retrieve the id for an available entity ID
         /// An assert is triggered in debug, if there are no available entities.
         ///
         Entity CreateEntity() { return m_EntityManager->CreateEntity(); }
@@ -86,6 +86,14 @@ class ECS {
         template <typename T>
         T& GetComponent(Entity entity) {
                 return m_ComponentManager->template GetComponent<T>(entity);
+        }
+
+        ///
+        /// Returns true of the entity has a mapped component of the specified type.
+        ///
+        template <typename T>
+        bool HasComponent(Entity entity) {
+                return m_ComponentManager->template ContainsComponent<T>(entity);
         }
 
         ///

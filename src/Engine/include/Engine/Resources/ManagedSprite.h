@@ -40,7 +40,8 @@ class ManagedSprite {
         // Override the destructor
         ~ManagedSprite() { ResourceManager::Get().Remove(GetTexture()); }
 
-        sf::Sprite& GetSprite() { return m_Sprite; }
+        void SetPosition(const sf::Vector2f newPosition) { m_Sprite.setPosition(newPosition); }
+        const sf::Sprite& GetSprite() { return m_Sprite; }
 
        private:
         sf::Sprite m_Sprite;
