@@ -1,10 +1,10 @@
 #pragma once
+#include <Engine/ECS/Entity.h>
+#include <Engine/Resources/ManagedSprite.h>
+
 #include <SFML/System/Vector2.hpp>
 #include <array>
 #include <cstdint>
-
-#include "Engine/ECS/Entity.h"
-#include "Engine/Resources/Texture.h"
 
 namespace Breakout {
 
@@ -72,6 +72,12 @@ struct CollisionResult {
 struct CollisionEvents {
         std::array<CollisionResult, 4> hits;
         uint8_t eventCount;
+};
+
+struct Ball {};
+
+struct BallSlots {
+        bool empty;
 };
 
 }  // namespace Breakout

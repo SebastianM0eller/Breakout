@@ -13,6 +13,7 @@ void RegisterBall(BreakoutECS& system, const Transform& transform, const RigidBo
         const BreakoutEntity entity = system.CreateEntity();
         system.AddComponent(entity, transform);
         system.AddComponent(entity, rigidBody);
+        system.AddComponent(entity, Ball{});
         system.AddComponent(entity, circleCollider);
         system.AddComponent(entity, circleCollisionEvents);
         system.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));

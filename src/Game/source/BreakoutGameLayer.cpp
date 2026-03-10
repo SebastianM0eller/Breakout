@@ -3,6 +3,8 @@
 // Systems
 #include "Components.h"
 #include "Entities.h"
+#include "Systems/BallLifeSystem.h"
+#include "Systems/BallTrackingSystem.h"
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
 #include "Systems/LocationSyncSystem.h"
@@ -22,6 +24,8 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<Breakout::Transform>();
         m_ECS.RegisterComponent<Breakout::Sprite>();
         m_ECS.RegisterComponent<Breakout::Player>();
+        m_ECS.RegisterComponent<Breakout::Ball>();
+        m_ECS.RegisterComponent<Breakout::BallSlots>();
         m_ECS.RegisterComponent<Breakout::ColliderComponent>();
         m_ECS.RegisterComponent<Breakout::CollisionEvents>();
 }
@@ -33,6 +37,8 @@ void BreakoutGameLayer::RegisterSystems() {
         Breakout::PlayerMovementSystem::RegisterSelf(m_ECS);
         Breakout::CollisionDetectionSystem::RegisterSelf(m_ECS);
         Breakout::CollisionResolutionSystem::RegisterSelf(m_ECS);
+        Breakout::BallTrackingSystem::RegisterSelf(m_ECS);
+        Breakout::BallLifeSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
