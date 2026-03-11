@@ -56,7 +56,8 @@ template <>
 void Engine::ResourceManager::Remove(sf::Texture* texture_ptr) {
         assert(texture_ptr && "Cannot remove a nullptr");
 
-        Remove<sf::Texture>(GetString(texture_ptr));
+        std::string path = GetString(texture_ptr);
+        Remove<sf::Texture>(path);
 }
 
 template <>

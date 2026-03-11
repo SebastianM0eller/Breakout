@@ -10,4 +10,6 @@ int main() {
 
         game.PushLayer<BreakoutGameLayer>();
         game.Run();
+
+        return 0;
 }

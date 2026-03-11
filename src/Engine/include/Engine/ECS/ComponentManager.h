@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
 
 #include "Engine/ECS/Component.h"
+#include "Engine/ECS/Entity.h"
 
 namespace Engine {
 
@@ -25,6 +27,9 @@ class ComponentManager {
 
         template <typename T>
         T& GetComponent(Entity entity);
+
+        template <typename T>
+        bool ContainsComponent(Entity entity);
 
         void EntityDestroyed(Entity entity);
 
@@ -120,6 +125,15 @@ void ComponentManager<EntityCount>::EntityDestroyed(Entity entity) {
         for (auto const& [type, componentArray] : m_ComponentArrays) {
                 componentArray->EntityDestroyed(entity);
         }
+}
+
+///
+/// Returns wether the entity contains the specified component or not.
+///
+template <uint32_t EntityCount>
+template <typename T>
+bool ComponentManager<EntityCount>::ContainsComponent(Entity entity) {
+        return GetComponentArray<T>()->HasData(entity);
 }
 
 ///

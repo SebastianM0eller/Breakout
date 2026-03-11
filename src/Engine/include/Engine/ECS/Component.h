@@ -20,6 +20,7 @@ class ComponentArray : public IComponentArray {
         void InsertData(Entity entity, T component);
         void RemoveData(Entity entity);
         T& GetData(Entity entity);
+        bool HasData(Entity entity);
         void EntityDestroyed(Entity entity) override;
 
        private:
@@ -82,6 +83,14 @@ T& ComponentArray<T, EntityCount>::GetData(Entity entity) {
                "Trying to retrive a non-existing component");
 
         return m_ComponentArray[m_EntityToIndexMap[entity]];
+}
+
+///
+/// Returns true if the entity has a mapped component.
+///
+template <typename T, uint32_t EntityCount>
+bool ComponentArray<T, EntityCount>::HasData(Entity entity) {
+        return (m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end());
 }
 
 ///

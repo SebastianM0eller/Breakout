@@ -1,12 +1,17 @@
 #pragma once
+#include <Engine/ECS/Entity.h>
+#include <Engine/Resources/ManagedSprite.h>
+
 #include <SFML/System/Vector2.hpp>
 #include <array>
 #include <cstdint>
 
-#include "Engine/ECS/Entity.h"
-#include "Engine/Resources/Texture.h"
-
 namespace Breakout {
+
+struct Destroyed {};
+
+template <typename T>
+struct DestroyedComponent {};
 
 struct Player {};
 
@@ -31,6 +36,7 @@ struct Sprite {
 enum PhysicsTag : uint8_t {
         PHYSICS_BALL,
         PHYSICS_WALL,
+        PHYSICS_KILLWALL,
         PHYSICS_PADDLE,
         PHYSICS_COUNT,
 };
@@ -73,5 +79,13 @@ struct CollisionEvents {
         std::array<CollisionResult, 4> hits;
         uint8_t eventCount;
 };
+
+struct Ball {};
+
+struct BallSlots {
+        bool empty;
+};
+
+struct AvailableBallSpawn {};
 
 }  // namespace Breakout

@@ -1,5 +1,9 @@
 #include "Systems/CollisionResolutionSystem.h"
 
+#include "BreakoutECS.h"
+#include "Components.h"
+#include "Engine/ECS/Entity.h"
+#include "Events.h"
 #include "SFML/System/Vector2.hpp"
 
 void Breakout::CollisionResolutionSystem::BasicBounce(const Engine::Entity entity, const CollisionResult& hit,
@@ -32,6 +36,12 @@ void Breakout::CollisionResolutionSystem::PaddleBounce(const Engine::Entity enti
         sf::Vector2f direction = (transform.location - transformOther.location);
         float velocity = rigidBody.velocity.length();
         rigidBody.velocity = velocity * direction.normalized();
+}
+
+void Breakout::CollisionResolutionSystem::KillBounce(const Engine::Entity entity, const CollisionResult&,
+                                                     BreakoutECS& system) {
+        system.AddComponent(entity, Destroyed{});
+        system.SendEvent(BallDestroyedEvent{});
 }
 
 void Breakout::CollisionResolutionSystem::IgnoreBounce(const Engine::Entity, const CollisionResult&, BreakoutECS&) {}

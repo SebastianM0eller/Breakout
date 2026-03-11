@@ -1,5 +1,7 @@
 #include "Entities.h"
 
+#include <cstdint>
+
 #include "BreakoutECS.h"
 #include "Components.h"
 #include "SFML/System/Vector2.hpp"
@@ -13,6 +15,7 @@ void RegisterBall(BreakoutECS& system, const Transform& transform, const RigidBo
         const BreakoutEntity entity = system.CreateEntity();
         system.AddComponent(entity, transform);
         system.AddComponent(entity, rigidBody);
+        system.AddComponent(entity, Ball{});
         system.AddComponent(entity, circleCollider);
         system.AddComponent(entity, circleCollisionEvents);
         system.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutBallv2.png")}));
@@ -65,6 +68,11 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
             {viewSize.x, 0}   // Bottom
         };
 
+        PhysicsTag tags[4] = {PHYSICS_WALL,       // Right
+                              PHYSICS_WALL,       // Top
+                              PHYSICS_WALL,       // Left
+                              PHYSICS_KILLWALL};  // Bottom
+
         for (uint8_t idx = 0; idx < 4; idx++) {
                 system.AddComponent(entities[idx], Transform(location[idx]));
                 system.AddComponent(entities[idx], RigidBody(velocity[idx]));
@@ -72,7 +80,23 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
 
                 WallCollider.rect.width = rectSize[idx].x;
                 WallCollider.rect.height = rectSize[idx].y;
+                WallCollider.tag = tags[idx];
                 system.AddComponent(entities[idx], WallCollider);
+        }
+}
+
+void RegisterLifes(BreakoutECS& system) {
+        BreakoutEntity entities[3];
+        for (uint32_t idx = 0; idx < 3; idx++) {
+                entities[idx] = system.CreateEntity();
+        }
+
+        sf::Vector2f location[3] = {{20, 20}, {40, 20}, {60, 20}};
+
+        for (uint32_t idx = 0; idx < 3; idx++) {
+                system.AddComponent(entities[idx], Transform{location[idx]});
+                system.AddComponent(entities[idx], Sprite({"assets/Textures/AvailableBall.png"}));
+                system.AddComponent(entities[idx], BallSlots{false});
         }
 }
 }  // namespace Breakout
