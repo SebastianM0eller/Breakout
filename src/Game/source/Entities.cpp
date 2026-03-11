@@ -1,5 +1,7 @@
 #include "Entities.h"
 
+#include <cstdint>
+
 #include "BreakoutECS.h"
 #include "Components.h"
 #include "SFML/System/Vector2.hpp"
@@ -80,6 +82,21 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
                 WallCollider.rect.height = rectSize[idx].y;
                 WallCollider.tag = tags[idx];
                 system.AddComponent(entities[idx], WallCollider);
+        }
+}
+
+void RegisterLifes(BreakoutECS& system) {
+        BreakoutEntity entities[3];
+        for (uint32_t idx = 0; idx < 3; idx++) {
+                entities[idx] = system.CreateEntity();
+        }
+
+        sf::Vector2f location[3] = {{20, 20}, {40, 20}, {60, 20}};
+
+        for (uint32_t idx = 0; idx < 3; idx++) {
+                system.AddComponent(entities[idx], Transform{location[idx]});
+                system.AddComponent(entities[idx], Sprite({"assets/Textures/AvailableBall.png"}));
+                system.AddComponent(entities[idx], BallSlots{false});
         }
 }
 }  // namespace Breakout

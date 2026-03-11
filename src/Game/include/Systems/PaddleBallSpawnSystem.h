@@ -13,6 +13,8 @@ class PaddleBallSpawnSystem : public Engine::System {
        public:
         void OnUpdate(BreakoutECS& system) {
                 if (!m_Entities.empty() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+                        std::vector<Engine::Entity> AvailableBallSpawnToDestroy;
+
                         for (const Engine::Entity entity : m_Entities) {
                                 Transform& transform = system.GetComponent<Transform>(entity);
 
@@ -21,6 +23,15 @@ class PaddleBallSpawnSystem : public Engine::System {
                                 spawnTransform.location.y -= 20;
 
                                 RegisterBall(system, spawnTransform, spawnRigidBody);
+
+                                AvailableBallSpawnToDestroy.push_back(entity);  // After is has spawned the ball, it
+                                                                                // should not be able to spawn anymore.
+
+                                break;  // We only ever want to spawn 1 ball.
+                        }
+
+                        for (const auto entity : AvailableBallSpawnToDestroy) {
+                                system.RemoveComponent<AvailableBallSpawn>(entity);
                         }
                 }
         }

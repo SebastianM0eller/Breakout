@@ -10,6 +10,9 @@ namespace Breakout {
 
 struct Destroyed {};
 
+template <typename T>
+struct DestroyedComponent {};
+
 struct Player {};
 
 struct Transform {

@@ -9,6 +9,7 @@
 #include "Systems/CollisionResolutionSystem.h"
 #include "Systems/DestroyedSystem.h"
 #include "Systems/LocationSyncSystem.h"
+#include "Systems/PaddleBallSpawnSystem.h"
 #include "Systems/PhysicsSystem.h"
 #include "Systems/PlayerSystem.h"
 #include "Systems/RenderSystem.h"
@@ -30,6 +31,7 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<Breakout::ColliderComponent>();
         m_ECS.RegisterComponent<Breakout::CollisionEvents>();
         m_ECS.RegisterComponent<Breakout::Destroyed>();
+        m_ECS.RegisterComponent<Breakout::AvailableBallSpawn>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
@@ -42,6 +44,7 @@ void BreakoutGameLayer::RegisterSystems() {
         Breakout::BallTrackingSystem::RegisterSelf(m_ECS);
         Breakout::BallLifeSystem::RegisterSelf(m_ECS);
         Breakout::DestroyedSystem::RegisterSelf(m_ECS);
+        Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
@@ -55,18 +58,20 @@ void BreakoutGameLayer::RegisterEntities() {
         Breakout::RegisterPaddle(m_ECS, paddleLocation);
 
         Breakout::RegisterWalls(m_ECS, viewSize);
+        Breakout::RegisterLifes(m_ECS);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
         m_ECS.GetSystem<Breakout::PlayerSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(m_ECS);  // Needs to run before the destructive
-                                                                           // systems.
         m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
         m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
         m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(m_ECS);  // Should always be last or first.
+        m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(m_ECS);     // Should always be after the physics update.
+        m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(m_ECS);  // Needs to run before the destructive
+                                                                           // systems, or after the destruction.
+        m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
 }
 
 void BreakoutGameLayer::OnRender() { m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS); }

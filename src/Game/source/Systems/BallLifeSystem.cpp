@@ -10,9 +10,9 @@
 #include "Events.h"
 
 void Breakout::BallLifeSystem::LifeGained(BreakoutECS& system) {
-        uint32_t first_available_entity = 0;          // To track the entity id.
-        float first_available_location = 1000000.0f;  // To track what entity to 'revive'
-        bool availableLifeIncrease = false;           // Track if we are at max lifes.
+        uint32_t first_available_entity = 0;    // To track the entity id.
+        float first_available_location = 0.0f;  // To track what entity to 'revive'
+        bool availableLifeIncrease = false;     // Track if we are at max lifes.
 
         for (const Engine::Entity entity : m_Entities) {
                 BallSlots& slot = system.GetComponent<BallSlots>(entity);
@@ -20,7 +20,7 @@ void Breakout::BallLifeSystem::LifeGained(BreakoutECS& system) {
 
                 availableLifeIncrease = (availableLifeIncrease || slot.empty);
 
-                if (slot.empty && transform.location.x < first_available_location) {
+                if (slot.empty && transform.location.x > first_available_location) {
                         first_available_entity = entity;
                         first_available_location = transform.location.x;
                 }
@@ -37,9 +37,9 @@ void Breakout::BallLifeSystem::LifeGained(BreakoutECS& system) {
 }
 
 void Breakout::BallLifeSystem::LifeUsed(BreakoutECS& system) {
-        uint32_t first_available_entity = 0;          // To track the entity id.
-        float first_available_location = 1000000.0f;  // To track what entity to 'kill'.
-        bool AvailableLifeDecrease = false;           // Should never be false, as the game would be over otherwise.
+        uint32_t first_available_entity = 0;    // To track the entity id.
+        float first_available_location = 0.0f;  // To track what entity to 'kill'.
+        bool AvailableLifeDecrease = false;     // Should never be false, as the game would be over otherwise.
 
         for (const Engine::Entity entity : m_Entities) {
                 BallSlots& slot = system.GetComponent<BallSlots>(entity);
@@ -47,7 +47,7 @@ void Breakout::BallLifeSystem::LifeUsed(BreakoutECS& system) {
 
                 AvailableLifeDecrease = (AvailableLifeDecrease || !slot.empty);
 
-                if (!slot.empty && transform.location.x < first_available_location) {
+                if (!slot.empty && transform.location.x > first_available_location) {
                         first_available_entity = entity;
                         first_available_location = transform.location.x;
                 }

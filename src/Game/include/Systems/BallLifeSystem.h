@@ -16,8 +16,8 @@ class BallLifeSystem : public Engine::System {
         static void RegisterSelf(BreakoutECS& system) {
                 BreakoutSignature signature;
                 signature.set(system.GetComponentType<BallSlots>(), true);
-                signature.set(system.GetComponentType<Sprite>());
-                signature.set(system.GetComponentType<Transform>());
+                signature.set(system.GetComponentType<Sprite>(), true);
+                signature.set(system.GetComponentType<Transform>(), true);
 
                 // We capture the shared_ptr, to use it for the callbacks.
                 auto self = system.RegisterSystem<BallLifeSystem>();

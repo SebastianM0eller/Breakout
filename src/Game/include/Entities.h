@@ -8,4 +8,5 @@ namespace Breakout {
 void RegisterBall(BreakoutECS& system, const Transform& transform, const RigidBody& rigidBody);
 void RegisterPaddle(BreakoutECS& system, const Transform& transsform);
 void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize);
+void RegisterLifes(BreakoutECS& system);
 }  // namespace Breakout
