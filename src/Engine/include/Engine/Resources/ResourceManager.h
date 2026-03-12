@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
 namespace Engine {
@@ -59,8 +60,13 @@ class ResourceManager {
         std::unordered_map<std::string, sf::Texture*> m_TextureCache;
         std::unordered_map<sf::Texture*, std::string> m_TextureToString;
         std::unordered_map<std::string, int16_t> m_TextureCount;
+
+        std::unordered_map<std::string, sf::Font*> m_FontCache;
+        std::unordered_map<sf::Font*, std::string> m_FontToString;
+        std::unordered_map<std::string, int16_t> m_FontCount;
 };
 
+// Texture
 template <>
 sf::Texture* ResourceManager::Load<sf::Texture>(const std::string& path);
 
@@ -72,5 +78,18 @@ void ResourceManager::Remove(sf::Texture* texture_ptr);
 
 template <>
 const std::string& ResourceManager::GetString(sf::Texture* texture);
+
+// Font
+template <>
+sf::Font* ResourceManager::Load<sf::Font>(const std::string& path);
+
+template <>
+void ResourceManager::Remove<sf::Font>(const std::string& path);
+
+template <>
+void ResourceManager::Remove(sf::Font* font);
+
+template <>
+const std::string& ResourceManager::GetString(sf::Font* font);
 
 }  // namespace Engine
