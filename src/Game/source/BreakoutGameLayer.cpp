@@ -3,6 +3,7 @@
 // Systems
 #include "Components.h"
 #include "Entities.h"
+#include "Events.h"
 #include "Systems/BallLifeSystem.h"
 #include "Systems/BallTrackingSystem.h"
 #include "Systems/CollisionDetectionSystem.h"
@@ -13,6 +14,7 @@
 #include "Systems/PhysicsSystem.h"
 #include "Systems/PlayerSystem.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/ScoreSystem.h"
 
 BreakoutGameLayer::BreakoutGameLayer() {
         m_ECS.Init();
@@ -32,6 +34,8 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<Breakout::CollisionEvents>();
         m_ECS.RegisterComponent<Breakout::Destroyed>();
         m_ECS.RegisterComponent<Breakout::AvailableBallSpawn>();
+        m_ECS.RegisterComponent<Breakout::Score>();
+        m_ECS.RegisterComponent<Breakout::Text>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
@@ -45,6 +49,7 @@ void BreakoutGameLayer::RegisterSystems() {
         Breakout::BallLifeSystem::RegisterSelf(m_ECS);
         Breakout::DestroyedSystem::RegisterSelf(m_ECS);
         Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
+        Breakout::ScoreSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
@@ -59,6 +64,7 @@ void BreakoutGameLayer::RegisterEntities() {
 
         Breakout::RegisterWalls(m_ECS, viewSize);
         Breakout::RegisterLifes(m_ECS);
+        Breakout::RegisterScore(m_ECS, viewSize);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
@@ -74,4 +80,10 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
         m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
 }
 
-void BreakoutGameLayer::OnRender() { m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS); }
+void BreakoutGameLayer::OnRender() {
+        m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS);
+        m_ECS.GetSystem<Breakout::ScoreSystem>()->OnRender(m_ECS);
+
+        // Just for testing :)
+        m_ECS.SendEvent(Breakout::ScoreIncreasedEvent{5});
+}

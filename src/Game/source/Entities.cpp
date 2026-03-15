@@ -99,4 +99,13 @@ void RegisterLifes(BreakoutECS& system) {
                 system.AddComponent(entities[idx], BallSlots{false});
         }
 }
+
+void RegisterScore(BreakoutECS& system, sf::Vector2f viewSize) {
+        BreakoutEntity entity = system.CreateEntity();
+
+        sf::Vector2f location(viewSize.x / 2.0f, 30);
+        system.AddComponent(entity, Transform{location});
+        system.AddComponent(entity, Score(0));
+        system.AddComponent(entity, Text(20, {"assets/Fonts/DefaultFont.ttf"}));
+}
 }  // namespace Breakout

@@ -4,8 +4,11 @@ set(ENGINE_SOURCES
 )
 
 set(ENGINE_HEADERS
-  include/Engine/Application.h
+  include/Engine/ECS/ECS.h
   include/Engine/Resources/ResourceManager.h
+  include/Engine/Resources/ManagedFont.h 
+  include/Engine/Resources/ManagedSprite.h
+  include/Engine/Application.h
   include/Engine/Renderer.h
   include/Engine/Layer.h
 )
