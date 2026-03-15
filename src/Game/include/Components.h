@@ -1,10 +1,14 @@
 #pragma once
 #include <Engine/ECS/Entity.h>
+#include <Engine/Resources/ManagedFont.h>
 #include <Engine/Resources/ManagedSprite.h>
 
 #include <SFML/System/Vector2.hpp>
 #include <array>
 #include <cstdint>
+
+#include "Engine/Resources/Text.h"
+#include "SFML/Graphics/Text.hpp"
 
 namespace Breakout {
 
@@ -87,5 +91,14 @@ struct BallSlots {
 };
 
 struct AvailableBallSpawn {};
+
+struct Score {
+        uint32_t score;
+};
+
+struct Text {
+        Engine::Text text;
+        Engine::ManagedFont font;  // Used to hold the lifetime for the font used in the text.
+};
 
 }  // namespace Breakout
