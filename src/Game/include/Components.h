@@ -41,6 +41,7 @@ enum PhysicsTag : uint8_t {
         PHYSICS_REGULAR,
         PHYSICS_KILL,
         PHYSICS_PADDLE,
+        PHYSICS_BOX,
         PHYSICS_COUNT,
 };
 

@@ -44,14 +44,16 @@ class CollisionResolutionSystem : public Engine::System {
         static void BasicBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
         static void PaddleBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
         static void IgnoreBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
+        static void KillBoxBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
         static void KillBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
 
         // The first is this this, second is other.
         static constexpr ResponseFunction m_CollisionMatrix[PhysicsTag::PHYSICS_COUNT][PhysicsTag::PHYSICS_COUNT] = {
-            /* This/other        Ball,           Normal,      Kill,        Paddle */
-            /* Ball,      */ {IgnoreBounce, BasicBounce, KillBounce, PaddleBounce},
-            /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* KillWall   */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* Paddle     */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce}};
+            /* This/other        Ball,           Normal,      Kill,        Paddle,        Box  */
+            /* Ball,      */ {IgnoreBounce, BasicBounce, KillBounce, PaddleBounce, BasicBounce},
+            /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
+            /* KillWall   */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
+            /* Paddle     */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
+            /* Box        */ {KillBoxBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce}};
 };
 }  // namespace Breakout
