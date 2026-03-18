@@ -48,7 +48,7 @@ class CollisionResolutionSystem : public Engine::System {
 
         // The first is this this, second is other.
         static constexpr ResponseFunction m_CollisionMatrix[PhysicsTag::PHYSICS_COUNT][PhysicsTag::PHYSICS_COUNT] = {
-            /* This/other        Ball,           Wall,      KillWall,        Paddle */
+            /* This/other        Ball,           Normal,      Kill,        Paddle */
             /* Ball,      */ {IgnoreBounce, BasicBounce, KillBounce, PaddleBounce},
             /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
             /* KillWall   */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},

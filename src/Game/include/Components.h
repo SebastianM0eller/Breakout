@@ -8,7 +8,6 @@
 #include <cstdint>
 
 #include "Engine/Resources/Text.h"
-#include "SFML/Graphics/Text.hpp"
 
 namespace Breakout {
 
@@ -39,8 +38,8 @@ struct Sprite {
 ///
 enum PhysicsTag : uint8_t {
         PHYSICS_BALL,
-        PHYSICS_WALL,
-        PHYSICS_KILLWALL,
+        PHYSICS_REGULAR,
+        PHYSICS_KILL,
         PHYSICS_PADDLE,
         PHYSICS_COUNT,
 };
