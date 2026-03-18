@@ -111,13 +111,14 @@ void RegisterScore(BreakoutECS& system, sf::Vector2f viewSize) {
 
 Breakout::ColliderComponent BoxCollider({.rect = {32.0f, 16.0f},
                                          .type = Breakout::SHAPE_RECTANGLE,
-                                         .tag = PHYSICS_REGULAR});
+                                         .tag = PHYSICS_BOX});
 Breakout::CollisionEvents BoxCollisionEvents({{}, 0});
 
 void RegisterBox(BreakoutECS& system, sf::Vector2f location) {
         BreakoutEntity entity = system.CreateEntity();
 
         system.AddComponent(entity, Transform{location});
+        system.AddComponent(entity, RigidBody());
         system.AddComponent(entity, Sprite({"assets/Textures/Box_Red.png"}));
         system.AddComponent(entity, BoxCollisionEvents);
         system.AddComponent(entity, BoxCollider);

@@ -1,5 +1,7 @@
 #include "Systems/CollisionResolutionSystem.h"
 
+#include <iostream>
+
 #include "BreakoutECS.h"
 #include "Components.h"
 #include "Engine/ECS/Entity.h"
@@ -38,6 +40,12 @@ void Breakout::CollisionResolutionSystem::PaddleBounce(const Engine::Entity enti
         rigidBody.velocity = velocity * direction.normalized();
 }
 
+void Breakout::CollisionResolutionSystem::KillBoxBounce(const Engine::Entity entity, const CollisionResult&,
+                                                        BreakoutECS& system) {
+        std::cout << "Points gained!";
+        system.AddComponent(entity, Destroyed{});
+        system.SendEvent(ScoreIncreasedEvent{25});
+}
 void Breakout::CollisionResolutionSystem::KillBounce(const Engine::Entity entity, const CollisionResult&,
                                                      BreakoutECS& system) {
         system.AddComponent(entity, Destroyed{});
