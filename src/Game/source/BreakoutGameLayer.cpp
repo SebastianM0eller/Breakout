@@ -3,7 +3,6 @@
 // Systems
 #include "Components.h"
 #include "Entities.h"
-#include "Events.h"
 #include "Systems/BallLifeSystem.h"
 #include "Systems/BallTrackingSystem.h"
 #include "Systems/CollisionDetectionSystem.h"
@@ -65,6 +64,8 @@ void BreakoutGameLayer::RegisterEntities() {
         Breakout::RegisterWalls(m_ECS, viewSize);
         Breakout::RegisterLifes(m_ECS);
         Breakout::RegisterScore(m_ECS, viewSize);
+
+        Breakout::RegisterBox(m_ECS, viewSize / 2.0f);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
@@ -83,7 +84,4 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
 void BreakoutGameLayer::OnRender() {
         m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS);
         m_ECS.GetSystem<Breakout::ScoreSystem>()->OnRender(m_ECS);
-
-        // Just for testing :)
-        m_ECS.SendEvent(Breakout::ScoreIncreasedEvent{5});
 }

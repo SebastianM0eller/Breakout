@@ -34,7 +34,7 @@ void RegisterPaddle(BreakoutECS& system, const Transform& transform) {
         system.AddComponent(entity, Sprite({Engine::ManagedSprite("assets/Textures/BreakoutPaddle.png")}));
 }
 
-Breakout::ColliderComponent WallCollider({.rect = {0.0f, 0.0f}, .type = SHAPE_RECTANGLE, .tag = PHYSICS_WALL});
+Breakout::ColliderComponent WallCollider({.rect = {0.0f, 0.0f}, .type = SHAPE_RECTANGLE, .tag = PHYSICS_REGULAR});
 Breakout::CollisionEvents WallsCollisionEvents({{}, 0});
 
 void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
@@ -68,10 +68,10 @@ void RegisterWalls(BreakoutECS& system, const sf::Vector2f& viewSize) {
             {viewSize.x, 0}   // Bottom
         };
 
-        PhysicsTag tags[4] = {PHYSICS_WALL,       // Right
-                              PHYSICS_WALL,       // Top
-                              PHYSICS_WALL,       // Left
-                              PHYSICS_KILLWALL};  // Bottom
+        PhysicsTag tags[4] = {PHYSICS_REGULAR,  // Right
+                              PHYSICS_REGULAR,  // Top
+                              PHYSICS_REGULAR,  // Left
+                              PHYSICS_KILL};    // Bottom
 
         for (uint8_t idx = 0; idx < 4; idx++) {
                 system.AddComponent(entities[idx], Transform(location[idx]));
@@ -107,5 +107,19 @@ void RegisterScore(BreakoutECS& system, sf::Vector2f viewSize) {
         system.AddComponent(entity, Transform{location});
         system.AddComponent(entity, Score(0));
         system.AddComponent(entity, Text(20, {"assets/Fonts/DefaultFont.ttf"}));
+}
+
+Breakout::ColliderComponent BoxCollider({.rect = {32.0f, 16.0f},
+                                         .type = Breakout::SHAPE_RECTANGLE,
+                                         .tag = PHYSICS_REGULAR});
+Breakout::CollisionEvents BoxCollisionEvents({{}, 0});
+
+void RegisterBox(BreakoutECS& system, sf::Vector2f location) {
+        BreakoutEntity entity = system.CreateEntity();
+
+        system.AddComponent(entity, Transform{location});
+        system.AddComponent(entity, Sprite({"assets/Textures/Box_Red.png"}));
+        system.AddComponent(entity, BoxCollisionEvents);
+        system.AddComponent(entity, BoxCollider);
 }
 }  // namespace Breakout
