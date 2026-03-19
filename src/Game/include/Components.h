@@ -101,4 +101,6 @@ struct Text {
         Engine::ManagedFont font;  // Used to hold the lifetime for the font used in the text.
 };
 
+struct Box {};
+
 }  // namespace Breakout

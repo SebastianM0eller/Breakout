@@ -119,6 +119,7 @@ void RegisterBox(BreakoutECS& system, sf::Vector2f location) {
 
         system.AddComponent(entity, Transform{location});
         system.AddComponent(entity, RigidBody());
+        system.AddComponent(entity, Box{});
         system.AddComponent(entity, Sprite({"assets/Textures/Box_Red.png"}));
         system.AddComponent(entity, BoxCollisionEvents);
         system.AddComponent(entity, BoxCollider);

@@ -5,6 +5,7 @@
 #include "Entities.h"
 #include "Systems/BallLifeSystem.h"
 #include "Systems/BallTrackingSystem.h"
+#include "Systems/BoxSpawningSystem.h"
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
 #include "Systems/DestroyedSystem.h"
@@ -35,6 +36,7 @@ void BreakoutGameLayer::RegisterComponents() {
         m_ECS.RegisterComponent<Breakout::AvailableBallSpawn>();
         m_ECS.RegisterComponent<Breakout::Score>();
         m_ECS.RegisterComponent<Breakout::Text>();
+        m_ECS.RegisterComponent<Breakout::Box>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
@@ -49,6 +51,7 @@ void BreakoutGameLayer::RegisterSystems() {
         Breakout::DestroyedSystem::RegisterSelf(m_ECS);
         Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
         Breakout::ScoreSystem::RegisterSelf(m_ECS);
+        Breakout::BoxSpawningSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
@@ -79,6 +82,7 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
         m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(m_ECS);  // Needs to run before the destructive
                                                                            // systems, or after the destruction.
         m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
+        m_ECS.GetSystem<Breakout::BoxSpawningSystem>()->OnUpdate(m_ECS);
 }
 
 void BreakoutGameLayer::OnRender() {
