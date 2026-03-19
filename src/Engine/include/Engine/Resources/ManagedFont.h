@@ -43,7 +43,9 @@ class ManagedFont {
         }
 
         // Override the destructor
-        ~ManagedFont() { ResourceManager::Get().Remove(m_Font); }
+        ~ManagedFont() {
+                if (m_Font != nullptr) ResourceManager::Get().Remove(m_Font);
+        }
 
         // Used to retrive the Font from the class.
         const sf::Font* GetFont() const { return m_Font; }
