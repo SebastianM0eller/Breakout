@@ -11,6 +11,7 @@ set(ENGINE_HEADERS
   include/Engine/Application.h
   include/Engine/Renderer.h
   include/Engine/Layer.h
+  include/Engine/Math/Easing.h
 )
 
 add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})
