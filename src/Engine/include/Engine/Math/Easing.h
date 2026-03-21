@@ -17,8 +17,8 @@ inline float Lerp(float start, float target, float blend) {
 /// Uses quadratic easing based on:
 /// Eased_Time = 1 - (1 - t) (1 - t)
 ///
-inline float EaseOutQuadratic(float time) {
-    return time * (2.0f - time);
+inline float EaseOutQuadratic(float blend) {
+    return blend * (2.0f - blend);
 }
 
 }  // namespace Engine::Math
