@@ -104,4 +104,13 @@ struct Text {
 
 struct Box {};
 
+struct LerpComponent {
+    sf::Vector2f start;
+    sf::Vector2f target;
+    float duration;
+    float elapsedTime;
+
+    // Add different Easing types in the future.
+};
+
 }  // namespace Breakout
