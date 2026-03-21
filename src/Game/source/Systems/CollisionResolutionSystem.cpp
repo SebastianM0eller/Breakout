@@ -19,8 +19,12 @@ void Breakout::CollisionResolutionSystem::BasicBounce(
     // For find the projection of the velocity onto the normal.
     sf::Vector2f projection = rigidBody.velocity.projectedOnto(hit.normal);
 
-    // Now we flip the normal velocity, by subtracting the projection twice.
-    rigidBody.velocity -= projection * 2.0f;
+    // We check if we are moving into the object. This is to avoid the velocity
+    // being flipped twice, if we hit more than one object a frame.
+    if (projection.dot(hit.normal) < 0) {
+        // Now we flip the normal velocity, by subtracting the projection twice.
+        rigidBody.velocity -= (projection) * 2.0f;
+    }
 }
 
 void Breakout::CollisionResolutionSystem::PaddleBounce(
