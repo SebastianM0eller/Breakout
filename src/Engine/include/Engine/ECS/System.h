@@ -9,46 +9,48 @@
 namespace Engine {
 
 class System {
-       public:
-        std::set<Entity> m_Entities;
+   public:
+    std::set<Entity> m_Entities;
 };
 
 template <uint8_t ComponentCount>
 class SystemManager {
-       public:
-        using Signature = std::bitset<ComponentCount>;
+   public:
+    using Signature = std::bitset<ComponentCount>;
 
-        template <typename T>
-        std::shared_ptr<T> RegisterSystem();
+    template <typename T>
+    std::shared_ptr<T> RegisterSystem();
 
-        template <typename T>
-        std::shared_ptr<T> GetSystem();
+    template <typename T>
+    std::shared_ptr<T> GetSystem();
 
-        template <typename T>
-        void SetSignature(Signature signature);
+    template <typename T>
+    void SetSignature(Signature signature);
 
-        void EntityDestroyed(Entity entity);
-        void EntitySignatureChanged(Entity entity, Signature signature);
+    void EntityDestroyed(Entity entity);
+    void EntitySignatureChanged(Entity entity, Signature signature);
 
-       private:
-        std::unordered_map<std::type_index, Signature> m_Signatures{};
-        std::unordered_map<std::type_index, std::shared_ptr<System>> m_Systems{};
+   private:
+    std::unordered_map<std::type_index, Signature> m_Signatures{};
+    std::unordered_map<std::type_index, std::shared_ptr<System>> m_Systems{};
 };
 
 ///
 /// Used to register a new system.
-/// If the system has already been registered, and assert is triggered in debug mode.
+/// If the system has already been registered, and assert is triggered in debug
+/// mode.
 ///
 template <uint8_t ComponentCount>
 template <typename T>
 std::shared_ptr<T> SystemManager<ComponentCount>::RegisterSystem() {
-        std::type_index typeName(typeid(T));
+    std::type_index typeName(typeid(T));
 
-        assert(m_Systems.find(typeName) == m_Systems.end() && "Registering a system more than once");
+    assert(m_Systems.find(typeName) == m_Systems.end() &&
+           "Registering a system more than once");
 
-        std::shared_ptr<T> system = std::make_shared<T>();
-        m_Systems.insert({typeName, system});
-        return system;
+    std::shared_ptr<T> system = std::make_shared<T>();
+    m_Systems.insert({typeName, system});
+    return system;
 }
 
 ///
@@ -58,11 +60,12 @@ std::shared_ptr<T> SystemManager<ComponentCount>::RegisterSystem() {
 template <uint8_t ComponentCount>
 template <typename T>
 std::shared_ptr<T> SystemManager<ComponentCount>::GetSystem() {
-        std::type_index typeName(typeid(T));
+    std::type_index typeName(typeid(T));
 
-        assert(m_Systems.find(typeName) != m_Systems.end() && "Accessing a system before registering");
+    assert(m_Systems.find(typeName) != m_Systems.end() &&
+           "Accessing a system before registering");
 
-        return std::static_pointer_cast<T>(m_Systems[typeName]);
+    return std::static_pointer_cast<T>(m_Systems[typeName]);
 }
 
 ///
@@ -72,11 +75,12 @@ std::shared_ptr<T> SystemManager<ComponentCount>::GetSystem() {
 template <uint8_t ComponentCount>
 template <typename T>
 void SystemManager<ComponentCount>::SetSignature(Signature signature) {
-        std::type_index typeName(typeid(T));
+    std::type_index typeName(typeid(T));
 
-        assert(m_Systems.find(typeName) != m_Systems.end() && "System used before Registering");
+    assert(m_Systems.find(typeName) != m_Systems.end() &&
+           "System used before Registering");
 
-        m_Signatures.insert({typeName, signature});
+    m_Signatures.insert({typeName, signature});
 }
 
 ///
@@ -84,25 +88,26 @@ void SystemManager<ComponentCount>::SetSignature(Signature signature) {
 ///
 template <uint8_t ComponentCount>
 void SystemManager<ComponentCount>::EntityDestroyed(Entity entity) {
-        for (auto const& [type, system] : m_Systems) {
-                system->m_Entities.erase(entity);
-        }
+    for (auto const& [type, system] : m_Systems) {
+        system->m_Entities.erase(entity);
+    }
 }
 
 ///
 /// Used to inform the systems that the signature of the entity has changed.
 ///
 template <uint8_t ComponentCount>
-void SystemManager<ComponentCount>::EntitySignatureChanged(Entity entity, Signature signature) {
-        for (const auto& [type, system] : m_Systems) {
-                auto const& systemSignature = m_Signatures[type];
+void SystemManager<ComponentCount>::EntitySignatureChanged(
+    Entity entity, Signature signature) {
+    for (const auto& [type, system] : m_Systems) {
+        auto const& systemSignature = m_Signatures[type];
 
-                if ((signature & systemSignature) == systemSignature) {
-                        system->m_Entities.insert(entity);
-                } else {
-                        system->m_Entities.erase(entity);
-                }
+        if ((signature & systemSignature) == systemSignature) {
+            system->m_Entities.insert(entity);
+        } else {
+            system->m_Entities.erase(entity);
         }
+    }
 }
 
 }  // namespace Engine
