@@ -1,9 +1,12 @@
 #include "Entities.h"
 
 #include <cstdint>
+#include <utility>
 
 #include "BreakoutECS.h"
 #include "Components.h"
+#include "Engine/ECS/Entity.h"
+#include "Engine/Renderer.h"
 #include "SFML/System/Vector2.hpp"
 
 namespace Breakout {
@@ -102,7 +105,9 @@ void RegisterLifes(BreakoutECS& system) {
         entities[idx] = system.CreateEntity();
     }
 
-    sf::Vector2f location[3] = {{20, 20}, {40, 20}, {60, 20}};
+    float viewY = Engine::Renderer::Get().GetViewSize().y;
+    sf::Vector2f location[3] = {
+        {20, viewY - 20}, {40, viewY - 20}, {60, viewY - 20}};
 
     for (uint32_t idx = 0; idx < 3; idx++) {
         system.AddComponent(entities[idx], Transform{location[idx]});
@@ -115,7 +120,7 @@ void RegisterLifes(BreakoutECS& system) {
 void RegisterScore(BreakoutECS& system, sf::Vector2f viewSize) {
     BreakoutEntity entity = system.CreateEntity();
 
-    sf::Vector2f location(viewSize.x / 2.0f, 30);
+    sf::Vector2f location(viewSize.x / 2.0f, 10);
     system.AddComponent(entity, Transform{location});
     system.AddComponent(entity, Score(0));
     system.AddComponent(entity, Text(20, {"assets/Fonts/DefaultFont.ttf"}));
@@ -126,7 +131,7 @@ Breakout::ColliderComponent BoxCollider({.rect = {32.0f, 16.0f},
                                          .tag = PHYSICS_BOX});
 Breakout::CollisionEvents BoxCollisionEvents({{}, 0});
 
-void RegisterBox(BreakoutECS& system, sf::Vector2f location) {
+Engine::Entity RegisterBox(BreakoutECS& system, sf::Vector2f location) {
     BreakoutEntity entity = system.CreateEntity();
 
     system.AddComponent(entity, Transform{location});
@@ -135,5 +140,34 @@ void RegisterBox(BreakoutECS& system, sf::Vector2f location) {
     system.AddComponent(entity, Sprite({"assets/Textures/Box_Red.png"}));
     system.AddComponent(entity, BoxCollisionEvents);
     system.AddComponent(entity, BoxCollider);
+
+    return entity;
+}
+
+void RegisterBoxes(BreakoutECS& system) {
+    constexpr std::pair<uint8_t, uint8_t> gridSize = {10, 6};  // x, y
+
+    float VerticalTravel = 150.0f;
+
+    float verticalBuffer = 18;
+    float horizontalBuffer = 34;
+
+    float halfHorizontal = (gridSize.first - 1) * horizontalBuffer / 2.0f;
+
+    sf::Vector2f center = Engine::Renderer::Get().GetViewSize() / 2.0f;
+
+    for (uint8_t xVal{0}; xVal < gridSize.first; xVal++) {
+        float xPos = center.x - halfHorizontal + xVal * horizontalBuffer;
+
+        for (uint8_t yVal{0}; yVal < gridSize.second; yVal++) {
+            float yPos = (yVal + 2) * verticalBuffer;
+
+            sf::Vector2f start{xPos, yPos - VerticalTravel};
+            sf::Vector2f target{xPos, yPos};
+
+            Engine::Entity entity = RegisterBox(system, start);
+            system.AddComponent(entity, LerpComponent(start, target, 1, 0));
+        }
+    }
 }
 }  // namespace Breakout

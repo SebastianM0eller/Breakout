@@ -39,6 +39,6 @@ class BallTrackingSystem : public Engine::System {
     }
 
    private:
-    bool m_CheckBallAmount{false};
+    bool m_CheckBallAmount{true};
 };
 }  // namespace Breakout

@@ -9,6 +9,7 @@
 #include "Systems/CollisionDetectionSystem.h"
 #include "Systems/CollisionResolutionSystem.h"
 #include "Systems/DestroyedSystem.h"
+#include "Systems/LerpingSystem.h"
 #include "Systems/LocationSyncSystem.h"
 #include "Systems/PaddleBallSpawnSystem.h"
 #include "Systems/PhysicsSystem.h"
@@ -37,6 +38,7 @@ void BreakoutGameLayer::RegisterComponents() {
     m_ECS.RegisterComponent<Breakout::Score>();
     m_ECS.RegisterComponent<Breakout::Text>();
     m_ECS.RegisterComponent<Breakout::Box>();
+    m_ECS.RegisterComponent<Breakout::LerpComponent>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
@@ -52,14 +54,11 @@ void BreakoutGameLayer::RegisterSystems() {
     Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
     Breakout::ScoreSystem::RegisterSelf(m_ECS);
     Breakout::BoxSpawningSystem::RegisterSelf(m_ECS);
+    Breakout::LerpingSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
     sf::Vector2f viewSize = Engine::Renderer::Get().GetViewSize();
-
-    Breakout::Transform ballLocation({viewSize.x / 2.0f, viewSize.y - 60.0f});
-    Breakout::RigidBody ballSpeed({0, -200});
-    Breakout::RegisterBall(m_ECS, ballLocation, ballSpeed);
 
     Breakout::Transform paddleLocation({viewSize.x / 2.0f, viewSize.y - 45});
     Breakout::RegisterPaddle(m_ECS, paddleLocation);
@@ -68,7 +67,7 @@ void BreakoutGameLayer::RegisterEntities() {
     Breakout::RegisterLifes(m_ECS);
     Breakout::RegisterScore(m_ECS, viewSize);
 
-    Breakout::RegisterBox(m_ECS, viewSize / 2.0f);
+    Breakout::RegisterBoxes(m_ECS);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
@@ -76,6 +75,7 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
         deltaTime *= 0.1f;
     m_ECS.GetSystem<Breakout::PlayerSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
+    m_ECS.GetSystem<Breakout::LerpingSystem>()->OnUpdate(m_ECS, deltaTime);
     m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
