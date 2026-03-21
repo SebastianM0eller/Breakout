@@ -11,7 +11,7 @@ struct BallDestroyedEvent {};
 struct BoxDestroyedEvent {};
 
 struct ScoreIncreasedEvent {
-        uint32_t increase;
+    uint32_t increase;
 };
 
 }  // namespace Breakout

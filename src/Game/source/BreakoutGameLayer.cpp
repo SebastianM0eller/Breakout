@@ -17,75 +17,78 @@
 #include "Systems/ScoreSystem.h"
 
 BreakoutGameLayer::BreakoutGameLayer() {
-        m_ECS.Init();
-        RegisterComponents();
-        RegisterSystems();
-        RegisterEntities();
+    m_ECS.Init();
+    RegisterComponents();
+    RegisterSystems();
+    RegisterEntities();
 }
 
 void BreakoutGameLayer::RegisterComponents() {
-        m_ECS.RegisterComponent<Breakout::RigidBody>();
-        m_ECS.RegisterComponent<Breakout::Transform>();
-        m_ECS.RegisterComponent<Breakout::Sprite>();
-        m_ECS.RegisterComponent<Breakout::Player>();
-        m_ECS.RegisterComponent<Breakout::Ball>();
-        m_ECS.RegisterComponent<Breakout::BallSlots>();
-        m_ECS.RegisterComponent<Breakout::ColliderComponent>();
-        m_ECS.RegisterComponent<Breakout::CollisionEvents>();
-        m_ECS.RegisterComponent<Breakout::Destroyed>();
-        m_ECS.RegisterComponent<Breakout::AvailableBallSpawn>();
-        m_ECS.RegisterComponent<Breakout::Score>();
-        m_ECS.RegisterComponent<Breakout::Text>();
-        m_ECS.RegisterComponent<Breakout::Box>();
+    m_ECS.RegisterComponent<Breakout::RigidBody>();
+    m_ECS.RegisterComponent<Breakout::Transform>();
+    m_ECS.RegisterComponent<Breakout::Sprite>();
+    m_ECS.RegisterComponent<Breakout::Player>();
+    m_ECS.RegisterComponent<Breakout::Ball>();
+    m_ECS.RegisterComponent<Breakout::BallSlots>();
+    m_ECS.RegisterComponent<Breakout::ColliderComponent>();
+    m_ECS.RegisterComponent<Breakout::CollisionEvents>();
+    m_ECS.RegisterComponent<Breakout::Destroyed>();
+    m_ECS.RegisterComponent<Breakout::AvailableBallSpawn>();
+    m_ECS.RegisterComponent<Breakout::Score>();
+    m_ECS.RegisterComponent<Breakout::Text>();
+    m_ECS.RegisterComponent<Breakout::Box>();
 }
 
 void BreakoutGameLayer::RegisterSystems() {
-        Breakout::PhysicsSystem::RegisterSelf(m_ECS);
-        Breakout::LocationSyncSystem::RegisterSelf(m_ECS);
-        Breakout::RenderSystem::RegisterSelf(m_ECS);
-        Breakout::PlayerSystem::RegisterSelf(m_ECS);
-        Breakout::CollisionDetectionSystem::RegisterSelf(m_ECS);
-        Breakout::CollisionResolutionSystem::RegisterSelf(m_ECS);
-        Breakout::BallTrackingSystem::RegisterSelf(m_ECS);
-        Breakout::BallLifeSystem::RegisterSelf(m_ECS);
-        Breakout::DestroyedSystem::RegisterSelf(m_ECS);
-        Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
-        Breakout::ScoreSystem::RegisterSelf(m_ECS);
-        Breakout::BoxSpawningSystem::RegisterSelf(m_ECS);
+    Breakout::PhysicsSystem::RegisterSelf(m_ECS);
+    Breakout::LocationSyncSystem::RegisterSelf(m_ECS);
+    Breakout::RenderSystem::RegisterSelf(m_ECS);
+    Breakout::PlayerSystem::RegisterSelf(m_ECS);
+    Breakout::CollisionDetectionSystem::RegisterSelf(m_ECS);
+    Breakout::CollisionResolutionSystem::RegisterSelf(m_ECS);
+    Breakout::BallTrackingSystem::RegisterSelf(m_ECS);
+    Breakout::BallLifeSystem::RegisterSelf(m_ECS);
+    Breakout::DestroyedSystem::RegisterSelf(m_ECS);
+    Breakout::PaddleBallSpawnSystem::RegisterSelf(m_ECS);
+    Breakout::ScoreSystem::RegisterSelf(m_ECS);
+    Breakout::BoxSpawningSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
-        sf::Vector2f viewSize = Engine::Renderer::Get().GetViewSize();
+    sf::Vector2f viewSize = Engine::Renderer::Get().GetViewSize();
 
-        Breakout::Transform ballLocation({viewSize.x / 2.0f, viewSize.y - 60.0f});
-        Breakout::RigidBody ballSpeed({0, -200});
-        Breakout::RegisterBall(m_ECS, ballLocation, ballSpeed);
+    Breakout::Transform ballLocation({viewSize.x / 2.0f, viewSize.y - 60.0f});
+    Breakout::RigidBody ballSpeed({0, -200});
+    Breakout::RegisterBall(m_ECS, ballLocation, ballSpeed);
 
-        Breakout::Transform paddleLocation({viewSize.x / 2.0f, viewSize.y - 45});
-        Breakout::RegisterPaddle(m_ECS, paddleLocation);
+    Breakout::Transform paddleLocation({viewSize.x / 2.0f, viewSize.y - 45});
+    Breakout::RegisterPaddle(m_ECS, paddleLocation);
 
-        Breakout::RegisterWalls(m_ECS, viewSize);
-        Breakout::RegisterLifes(m_ECS);
-        Breakout::RegisterScore(m_ECS, viewSize);
+    Breakout::RegisterWalls(m_ECS, viewSize);
+    Breakout::RegisterLifes(m_ECS);
+    Breakout::RegisterScore(m_ECS, viewSize);
 
-        Breakout::RegisterBox(m_ECS, viewSize / 2.0f);
+    Breakout::RegisterBox(m_ECS, viewSize / 2.0f);
 }
 
 void BreakoutGameLayer::OnUpdate(float deltaTime) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) deltaTime *= 0.1f;
-        m_ECS.GetSystem<Breakout::PlayerSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
-        m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(m_ECS);     // Should always be after the physics update.
-        m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(m_ECS);  // Needs to run before the destructive
-                                                                           // systems, or after the destruction.
-        m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
-        m_ECS.GetSystem<Breakout::BoxSpawningSystem>()->OnUpdate(m_ECS);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+        deltaTime *= 0.1f;
+    m_ECS.GetSystem<Breakout::PlayerSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::PhysicsSystem>()->OnUpdate(deltaTime, m_ECS);
+    m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(
+        m_ECS);  // Should always be after the physics update.
+    m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(
+        m_ECS);  // Needs to run before the destructive
+                 // systems, or after the destruction.
+    m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::BoxSpawningSystem>()->OnUpdate(m_ECS);
 }
 
 void BreakoutGameLayer::OnRender() {
-        m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS);
-        m_ECS.GetSystem<Breakout::ScoreSystem>()->OnRender(m_ECS);
+    m_ECS.GetSystem<Breakout::RenderSystem>()->OnRender(m_ECS);
+    m_ECS.GetSystem<Breakout::ScoreSystem>()->OnRender(m_ECS);
 }

@@ -13,27 +13,29 @@ using ComponentType = uint8_t;
 
 template <uint8_t ComponentCount, uint32_t EntityCount>
 class EntityManager {
-       public:
-        using Signature = std::bitset<ComponentCount>;
-        EntityManager();  // For a standard allocation of EntityCount Entities.
+   public:
+    using Signature = std::bitset<ComponentCount>;
+    EntityManager();  // For a standard allocation of EntityCount Entities.
 
-        Entity CreateEntity();
-        void DestroyEntity(Entity entity);
-        void SetSignature(Entity entity, Signature signature);
-        Signature GetSignature(Entity entity);
+    Entity CreateEntity();
+    void DestroyEntity(Entity entity);
+    void SetSignature(Entity entity, Signature signature);
+    Signature GetSignature(Entity entity);
 
-       private:
-        std::queue<Entity> m_AvailableEntities{};
-        uint32_t m_LivingCount{};
-        std::array<Signature, EntityCount> m_Signatures{};
+   private:
+    std::queue<Entity> m_AvailableEntities{};
+    uint32_t m_LivingCount{};
+    std::array<Signature, EntityCount> m_Signatures{};
 };
 
 //
-//  Creates a new EntityManager with the templated ComponentCount, and a default max entity count of EntityCount.
+//  Creates a new EntityManager with the templated ComponentCount, and a default
+//  max entity count of EntityCount.
 //
 template <uint8_t ComponentCount, uint32_t EntityCount>
 EntityManager<ComponentCount, EntityCount>::EntityManager() {
-        for (Entity entity = 0; entity < EntityCount; entity++) m_AvailableEntities.push(entity);
+    for (Entity entity = 0; entity < EntityCount; entity++)
+        m_AvailableEntities.push(entity);
 }
 
 ///
@@ -42,13 +44,13 @@ EntityManager<ComponentCount, EntityCount>::EntityManager() {
 ///
 template <uint8_t ComponentCount, uint32_t EntityCount>
 Entity EntityManager<ComponentCount, EntityCount>::CreateEntity() {
-        assert(m_LivingCount < EntityCount && "To many entities in existance");
+    assert(m_LivingCount < EntityCount && "To many entities in existance");
 
-        Entity entity = m_AvailableEntities.front();
-        m_AvailableEntities.pop();
-        m_LivingCount++;
+    Entity entity = m_AvailableEntities.front();
+    m_AvailableEntities.pop();
+    m_LivingCount++;
 
-        return entity;
+    return entity;
 }
 
 ///
@@ -57,12 +59,12 @@ Entity EntityManager<ComponentCount, EntityCount>::CreateEntity() {
 ///
 template <uint8_t ComponentCount, uint32_t EntityCount>
 void EntityManager<ComponentCount, EntityCount>::DestroyEntity(Entity entity) {
-        assert(entity < EntityCount && "Entity out of range");
+    assert(entity < EntityCount && "Entity out of range");
 
-        m_Signatures[entity].reset();
+    m_Signatures[entity].reset();
 
-        m_AvailableEntities.push(entity);
-        m_LivingCount--;
+    m_AvailableEntities.push(entity);
+    m_LivingCount--;
 }
 
 ///
@@ -70,10 +72,11 @@ void EntityManager<ComponentCount, EntityCount>::DestroyEntity(Entity entity) {
 /// Asserts that the ID of the entity is valid.
 ///
 template <uint8_t ComponentCount, uint32_t EntityCount>
-void EntityManager<ComponentCount, EntityCount>::SetSignature(Entity entity, Signature signature) {
-        assert(entity < EntityCount && "Entity out of range");
+void EntityManager<ComponentCount, EntityCount>::SetSignature(
+    Entity entity, Signature signature) {
+    assert(entity < EntityCount && "Entity out of range");
 
-        m_Signatures[entity] = signature;
+    m_Signatures[entity] = signature;
 }
 
 ///
@@ -81,10 +84,11 @@ void EntityManager<ComponentCount, EntityCount>::SetSignature(Entity entity, Sig
 /// Asserts that the ID of the is valid.
 ///
 template <uint8_t ComponentCount, uint32_t EntityCount>
-std::bitset<ComponentCount> EntityManager<ComponentCount, EntityCount>::GetSignature(Entity entity) {
-        assert(entity < EntityCount && "Entity out of range");
+std::bitset<ComponentCount>
+EntityManager<ComponentCount, EntityCount>::GetSignature(Entity entity) {
+    assert(entity < EntityCount && "Entity out of range");
 
-        return m_Signatures[entity];
+    return m_Signatures[entity];
 }
 }  // namespace Engine
 

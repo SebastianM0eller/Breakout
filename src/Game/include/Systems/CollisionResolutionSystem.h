@@ -9,51 +9,75 @@
 namespace Breakout {
 
 class CollisionResolutionSystem : public Engine::System {
-       public:
-        void OnUpdate(BreakoutECS& system) {
-                for (const auto entity : m_Entities) {
-                        CollisionEvents& events = system.GetComponent<CollisionEvents>(entity);
-                        ColliderComponent& shape = system.GetComponent<ColliderComponent>(entity);
+   public:
+    void OnUpdate(BreakoutECS& system) {
+        for (const auto entity : m_Entities) {
+            CollisionEvents& events =
+                system.GetComponent<CollisionEvents>(entity);
+            ColliderComponent& shape =
+                system.GetComponent<ColliderComponent>(entity);
 
-                        for (uint8_t idx = 0; idx < events.eventCount; idx++) {
-                                Engine::Entity other = events.hits[idx].other;
-                                ColliderComponent& otherShape = system.GetComponent<ColliderComponent>(other);
+            for (uint8_t idx = 0; idx < events.eventCount; idx++) {
+                Engine::Entity other = events.hits[idx].other;
+                ColliderComponent& otherShape =
+                    system.GetComponent<ColliderComponent>(other);
 
-                                m_CollisionMatrix[shape.tag][otherShape.tag](entity, events.hits[idx], system);
-                        }
+                m_CollisionMatrix[shape.tag][otherShape.tag](
+                    entity, events.hits[idx], system);
+            }
 
-                        // Reset the count.
-                        events.eventCount = 0;
-                }
+            // Reset the count.
+            events.eventCount = 0;
         }
+    }
 
-        static void RegisterSelf(BreakoutECS& system) {
-                BreakoutSignature signature;
-                signature.set(system.GetComponentType<CollisionEvents>(), true);
-                signature.set(system.GetComponentType<ColliderComponent>(), true);
-                signature.set(system.GetComponentType<Transform>(), true);
-                signature.set(system.GetComponentType<RigidBody>(), true);
+    static void RegisterSelf(BreakoutECS& system) {
+        BreakoutSignature signature;
+        signature.set(system.GetComponentType<CollisionEvents>(), true);
+        signature.set(system.GetComponentType<ColliderComponent>(), true);
+        signature.set(system.GetComponentType<Transform>(), true);
+        signature.set(system.GetComponentType<RigidBody>(), true);
 
-                system.RegisterSystem<CollisionResolutionSystem>();
-                system.SetSystemSignature<CollisionResolutionSystem>(signature);
-        }
+        system.RegisterSystem<CollisionResolutionSystem>();
+        system.SetSystemSignature<CollisionResolutionSystem>(signature);
+    }
 
-       private:
-        using ResponseFunction = void (*)(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
+   private:
+    using ResponseFunction = void (*)(const Engine::Entity entity,
+                                      const CollisionResult& hit,
+                                      BreakoutECS& system);
 
-        static void BasicBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
-        static void PaddleBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
-        static void IgnoreBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
-        static void KillBoxBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
-        static void KillBounce(const Engine::Entity entity, const CollisionResult& hit, BreakoutECS& system);
+    static void BasicBounce(const Engine::Entity entity,
+                            const CollisionResult& hit, BreakoutECS& system);
+    static void PaddleBounce(const Engine::Entity entity,
+                             const CollisionResult& hit, BreakoutECS& system);
+    static void IgnoreBounce(const Engine::Entity entity,
+                             const CollisionResult& hit, BreakoutECS& system);
+    static void KillBoxBounce(const Engine::Entity entity,
+                              const CollisionResult& hit, BreakoutECS& system);
+    static void KillBounce(const Engine::Entity entity,
+                           const CollisionResult& hit, BreakoutECS& system);
 
-        // The first is this this, second is other.
-        static constexpr ResponseFunction m_CollisionMatrix[PhysicsTag::PHYSICS_COUNT][PhysicsTag::PHYSICS_COUNT] = {
-            /* This/other        Ball,           Normal,      Kill,        Paddle,        Box  */
-            /* Ball,      */ {IgnoreBounce, BasicBounce, KillBounce, PaddleBounce, BasicBounce},
-            /* Wall       */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* KillWall   */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* Paddle     */ {IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce},
-            /* Box        */ {KillBoxBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce, IgnoreBounce}};
+    // The first is this this, second is other.
+    static constexpr ResponseFunction
+        m_CollisionMatrix[PhysicsTag::PHYSICS_COUNT]
+                         [PhysicsTag::PHYSICS_COUNT] = {
+                             /* This/other        Ball,           Normal, Kill,
+                                Paddle,        Box  */
+                             /* Ball,      */ {IgnoreBounce, BasicBounce,
+                                               KillBounce, PaddleBounce,
+                                               BasicBounce},
+                             /* Wall       */
+                             {IgnoreBounce, IgnoreBounce, IgnoreBounce,
+                              IgnoreBounce, IgnoreBounce},
+                             /* KillWall   */
+                             {IgnoreBounce, IgnoreBounce, IgnoreBounce,
+                              IgnoreBounce, IgnoreBounce},
+                             /* Paddle     */
+                             {IgnoreBounce, IgnoreBounce, IgnoreBounce,
+                              IgnoreBounce, IgnoreBounce},
+                             /* Box        */
+                             {KillBoxBounce, IgnoreBounce, IgnoreBounce,
+                              IgnoreBounce, IgnoreBounce}};
 };
 }  // namespace Breakout

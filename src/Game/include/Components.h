@@ -19,86 +19,87 @@ struct DestroyedComponent {};
 struct Player {};
 
 struct Transform {
-        sf::Vector2f location;
+    sf::Vector2f location;
 };
 
 struct RigidBody {
-        sf::Vector2f velocity;
+    sf::Vector2f velocity;
 };
 
 ///
 /// Automatically manages the Texture resource.
 ///
 struct Sprite {
-        Engine::ManagedSprite sprite;
+    Engine::ManagedSprite sprite;
 };
 
 ///
 /// The Physics tags. The PHYSICS_COUNT gives us the amount of types.
 ///
 enum PhysicsTag : uint8_t {
-        PHYSICS_BALL,
-        PHYSICS_REGULAR,
-        PHYSICS_KILL,
-        PHYSICS_PADDLE,
-        PHYSICS_BOX,
-        PHYSICS_COUNT,
+    PHYSICS_BALL,
+    PHYSICS_REGULAR,
+    PHYSICS_KILL,
+    PHYSICS_PADDLE,
+    PHYSICS_BOX,
+    PHYSICS_COUNT,
 };
 
 ///
 /// The shape tags. The SHAPE_TYPE_COUNT gives us the amount of types.
 ///
 enum ShapeType : uint8_t {
-        SHAPE_CIRCLE = 0,
-        SHAPE_RECTANGLE,
-        SHAPE_TYPE_COUNT,
+    SHAPE_CIRCLE = 0,
+    SHAPE_RECTANGLE,
+    SHAPE_TYPE_COUNT,
 };
 
 struct CircleData {
-        float radius;
+    float radius;
 };
 
 struct RectangleData {
-        float width;
-        float height;
+    float width;
+    float height;
 };
 
 struct ColliderComponent {
-        union {
-                CircleData circle;
-                RectangleData rect;
-        };
-        ShapeType type;
-        PhysicsTag tag;
+    union {
+        CircleData circle;
+        RectangleData rect;
+    };
+    ShapeType type;
+    PhysicsTag tag;
 };
 
 struct CollisionResult {
-        sf::Vector2f normal;
-        Engine::Entity other;
-        float penetrationDepth;
-        bool isColliding;
+    sf::Vector2f normal;
+    Engine::Entity other;
+    float penetrationDepth;
+    bool isColliding;
 };
 
 struct CollisionEvents {
-        std::array<CollisionResult, 4> hits;
-        uint8_t eventCount;
+    std::array<CollisionResult, 4> hits;
+    uint8_t eventCount;
 };
 
 struct Ball {};
 
 struct BallSlots {
-        bool empty;
+    bool empty;
 };
 
 struct AvailableBallSpawn {};
 
 struct Score {
-        uint32_t score;
+    uint32_t score;
 };
 
 struct Text {
-        Engine::Text text;
-        Engine::ManagedFont font;  // Used to hold the lifetime for the font used in the text.
+    Engine::Text text;
+    Engine::ManagedFont
+        font;  // Used to hold the lifetime for the font used in the text.
 };
 
 struct Box {};

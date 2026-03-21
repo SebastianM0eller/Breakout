@@ -4,10 +4,10 @@
 #include "BreakoutGameLayer.h"
 
 int main() {
-        Engine::Application::ApplicationConfig config;
-        config.WindowViewSize = {600, 450};
-        Engine::Application game(config);
+    Engine::Application::ApplicationConfig config;
+    config.WindowViewSize = {600, 450};
+    Engine::Application game(config);
 
-        game.PushLayer<BreakoutGameLayer>();
-        game.Run();
+    game.PushLayer<BreakoutGameLayer>();
+    game.Run();
 }
