@@ -1,5 +1,7 @@
 #include "Systems/CollisionResolutionSystem.h"
 
+#include <cstdlib>
+
 #include "BreakoutECS.h"
 #include "Components.h"
 #include "Engine/ECS/Entity.h"
@@ -7,6 +9,39 @@
 #include "SFML/System/Vector2.hpp"
 
 void Breakout::CollisionResolutionSystem::BasicBounce(
+    const Engine::Entity entity, const CollisionResult& hit,
+    BreakoutECS& system) {
+    // We get the data.
+    Transform& transform = system.GetComponent<Transform>(entity);
+    RigidBody& rigidBody = system.GetComponent<RigidBody>(entity);
+
+    // We adjust the normal, to be 0, 90, 180 or 270 degrees.
+    sf::Vector2f newNormal;
+
+    if (std::abs(hit.normal.x) > std::abs(hit.normal.y)) {
+        newNormal.x = hit.normal.x;
+        newNormal.y = 0;
+    } else {
+        newNormal.x = 0;
+        newNormal.y = hit.normal.y;
+    }
+
+    // We correct for the penetration, using the old normal.
+    transform.location += hit.normal * hit.penetrationDepth;
+
+    // For find the projection of the velocity onto the normal, using the new
+    // normal.
+    sf::Vector2f projection = rigidBody.velocity.projectedOnto(newNormal);
+
+    // We check if we are moving into the object. This is to avoid the velocity
+    // being flipped twice, if we hit more than one object a frame.
+    if (projection.dot(newNormal) < 0) {
+        // Now we flip the normal velocity, by subtracting the projection twice.
+        rigidBody.velocity -= (projection) * 2.0f;
+    }
+}
+
+void Breakout::CollisionResolutionSystem::RegularBounce(
     const Engine::Entity entity, const CollisionResult& hit,
     BreakoutECS& system) {
     // We get the data.
