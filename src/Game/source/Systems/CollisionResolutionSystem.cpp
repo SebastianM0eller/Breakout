@@ -65,6 +65,9 @@ void Breakout::CollisionResolutionSystem::RegularBounce(
 void Breakout::CollisionResolutionSystem::PaddleBounce(
     const Engine::Entity entity, const CollisionResult& hit,
     BreakoutECS& system) {
+    assert(system.HasComponent<Ball>(entity) &&
+           "Only the ball, should collide with the paddle.");
+
     // We get the data.
     Transform& transform = system.GetComponent<Transform>(entity);
     RigidBody& rigidBody = system.GetComponent<RigidBody>(entity);
@@ -77,14 +80,27 @@ void Breakout::CollisionResolutionSystem::PaddleBounce(
     sf::Vector2f direction = (transform.location - transformOther.location);
     float velocity = rigidBody.velocity.length();
     rigidBody.velocity = velocity * direction.normalized();
+
+    // We reset the multiplier for the ball.
+    uint32_t& multiplier = system.GetComponent<Ball>(entity).scoreIncrease;
+    multiplier = 0;
 }
 
 void Breakout::CollisionResolutionSystem::KillBoxBounce(
-    const Engine::Entity entity, const CollisionResult&, BreakoutECS& system) {
-    system.AddComponent(entity, Destroyed{});
-    system.SendEvent(ScoreIncreasedEvent{25});
+    const Engine::Entity entity, const CollisionResult& hit,
+    BreakoutECS& system) {
+    assert(system.HasComponent<Ball>(hit.other) &&
+           "A box should only be destroyed, if it collides with a ball");
+
+    uint32_t& increase = system.GetComponent<Ball>(hit.other).scoreIncrease;
+
+    system.SendEvent(ScoreIncreasedEvent{25 + increase});
     system.SendEvent(BoxDestroyedEvent{});
+    system.AddComponent(entity, Destroyed{});
+
+    increase += 5;
 }
+
 void Breakout::CollisionResolutionSystem::KillBounce(
     const Engine::Entity entity, const CollisionResult&, BreakoutECS& system) {
     system.AddComponent(entity, Destroyed{});
