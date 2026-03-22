@@ -92,13 +92,15 @@ void Breakout::CollisionResolutionSystem::KillBoxBounce(
     assert(system.HasComponent<Ball>(hit.other) &&
            "A box should only be destroyed, if it collides with a ball");
 
-    uint32_t& increase = system.GetComponent<Ball>(hit.other).scoreIncrease;
+    Ball& ball = system.GetComponent<Ball>(hit.other);
+    RigidBody& ballSpeed = system.GetComponent<RigidBody>(hit.other);
 
-    system.SendEvent(ScoreIncreasedEvent{25 + increase});
+    system.SendEvent(ScoreIncreasedEvent{25 + ball.scoreIncrease});
     system.SendEvent(BoxDestroyedEvent{});
     system.AddComponent(entity, Destroyed{});
 
-    increase += 5;
+    ball.scoreIncrease += 5;
+    ballSpeed.velocity *= ball.speedMultiplier;
 }
 
 void Breakout::CollisionResolutionSystem::KillBounce(

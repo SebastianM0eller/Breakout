@@ -78,7 +78,6 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
     m_ECS.GetSystem<Breakout::LerpingSystem>()->OnUpdate(m_ECS, deltaTime);
     m_ECS.GetSystem<Breakout::CollisionDetectionSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::CollisionResolutionSystem>()->OnUpdate(m_ECS);
-    m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::DestroyedSystem>()->OnUpdate(
         m_ECS);  // Should always be after the physics update.
     m_ECS.GetSystem<Breakout::BallTrackingSystem>()->OnUpdate(
@@ -86,6 +85,8 @@ void BreakoutGameLayer::OnUpdate(float deltaTime) {
                  // systems, or after the destruction.
     m_ECS.GetSystem<Breakout::PaddleBallSpawnSystem>()->OnUpdate(m_ECS);
     m_ECS.GetSystem<Breakout::BoxSpawningSystem>()->OnUpdate(m_ECS);
+    m_ECS.GetSystem<Breakout::BallTrackingSystem>()->SyncSpeed(m_ECS);
+    m_ECS.GetSystem<Breakout::LocationSyncSystem>()->OnUpdate(m_ECS);
 }
 
 void BreakoutGameLayer::OnRender() {
