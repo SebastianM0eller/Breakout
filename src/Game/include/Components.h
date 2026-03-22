@@ -84,7 +84,9 @@ struct CollisionEvents {
     uint8_t eventCount;
 };
 
-struct Ball {};
+struct Ball {
+    uint32_t scoreIncrease{0};
+};
 
 struct BallSlots {
     bool empty;
