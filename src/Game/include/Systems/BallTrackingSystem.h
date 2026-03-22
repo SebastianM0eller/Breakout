@@ -2,6 +2,8 @@
 
 #include <Engine/ECS/System.h>
 
+#include <cmath>
+
 #include "BreakoutECS.h"
 #include "Components.h"
 #include "Events.h"
@@ -19,6 +21,25 @@ class BallTrackingSystem : public Engine::System {
     }
     void OnBallDestruction() {
         m_CheckBallAmount = true;
+    }
+
+    void SyncSpeed(BreakoutECS& system) {
+        // Find the ball, with the higest speed.
+        float maxSpeed{0};
+
+        for (auto const entity : m_Entities) {
+            const RigidBody rigidBody = system.GetComponent<RigidBody>(entity);
+            float speed = rigidBody.velocity.lengthSquared();
+            maxSpeed += (speed - maxSpeed) * (speed > maxSpeed);
+        }
+
+        maxSpeed = std::sqrt(maxSpeed);
+
+        // Set the speed for all the balls.
+        for (const auto entity : m_Entities) {
+            RigidBody& rigidBody = system.GetComponent<RigidBody>(entity);
+            rigidBody.velocity = rigidBody.velocity.normalized() * maxSpeed;
+        }
     }
 
     static void RegisterSelf(BreakoutECS& system) {

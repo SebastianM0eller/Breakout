@@ -86,6 +86,7 @@ struct CollisionEvents {
 
 struct Ball {
     uint32_t scoreIncrease{0};
+    float speedMultiplier{1.001};
 };
 
 struct BallSlots {
