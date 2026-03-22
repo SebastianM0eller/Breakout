@@ -166,7 +166,7 @@ void RegisterBoxes(BreakoutECS& system) {
             sf::Vector2f target{xPos, yPos};
 
             Engine::Entity entity = RegisterBox(system, start);
-            system.AddComponent(entity, LerpComponent(start, target, 1, 0));
+            system.AddComponent(entity, LerpComponent(start, target, 2, 0));
         }
     }
 }

@@ -49,6 +49,8 @@ class CollisionResolutionSystem : public Engine::System {
 
     static void BasicBounce(const Engine::Entity entity,
                             const CollisionResult& hit, BreakoutECS& system);
+    static void RegularBounce(const Engine::Entity entity,
+                              const CollisionResult& hit, BreakoutECS& system);
     static void PaddleBounce(const Engine::Entity entity,
                              const CollisionResult& hit, BreakoutECS& system);
     static void IgnoreBounce(const Engine::Entity entity,
