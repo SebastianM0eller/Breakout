@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "SFML/Audio/SoundBuffer.hpp"
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
@@ -70,6 +71,10 @@ class ResourceManager {
     std::unordered_map<std::string, sf::Font*> m_FontCache;
     std::unordered_map<sf::Font*, std::string> m_FontToString;
     std::unordered_map<std::string, int16_t> m_FontCount;
+
+    std::unordered_map<std::string, sf::SoundBuffer*> m_SoundBufferCache;
+    std::unordered_map<sf::SoundBuffer*, std::string> m_SoundBufferToString;
+    std::unordered_map<std::string, int16_t> m_SoundBufferCount;
 };
 
 // Texture
@@ -97,5 +102,19 @@ void ResourceManager::Remove(sf::Font* font);
 
 template <>
 const std::string& ResourceManager::GetString(sf::Font* font);
+
+// SoundBuffer
+template <>
+sf::SoundBuffer* ResourceManager::Load<sf::SoundBuffer>(
+    const std::string& path);
+
+template <>
+void ResourceManager::Remove<sf::SoundBuffer>(const std::string& path);
+
+template <>
+void ResourceManager::Remove(sf::SoundBuffer* buffer);
+
+template <>
+const std::string& ResourceManager::GetString(sf::SoundBuffer* buffer);
 
 }  // namespace Engine
