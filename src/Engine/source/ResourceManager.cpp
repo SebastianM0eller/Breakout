@@ -3,6 +3,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "SFML/Audio/SoundBuffer.hpp"
+
 // Texture
 
 template <>
@@ -134,4 +136,72 @@ const std::string& Engine::ResourceManager::GetString(sf::Font* font) {
            "There is no string associated with that ptr");
 
     return m_FontToString[font];
+}
+
+// SoundBuffer
+
+template <>
+sf::SoundBuffer* Engine::ResourceManager::Load<sf::SoundBuffer>(
+    const std::string& path) {
+    assert(path != "");
+    // Check if we have the Buffer in the cache.
+    auto it = m_SoundBufferCache.find(path);
+    if (it != m_SoundBufferCache.end()) {
+        // Mabey log it?
+        m_SoundBufferCount[path]++;
+        return it->second;
+    }
+
+    // If it's not cached we load the Buffer from source.
+    sf::SoundBuffer* newBuffer = new sf::SoundBuffer();
+    if (!newBuffer->loadFromFile(path)) {
+        delete newBuffer;  // Cleanup
+
+        // Should log the missing SoundBuffer.
+        return nullptr;
+    }
+
+    // We update the cache.
+    m_SoundBufferCache[path] = newBuffer;
+    m_SoundBufferCount[path] = 1;
+    m_SoundBufferToString[newBuffer] = path;
+    return newBuffer;
+}
+
+template <>
+void Engine::ResourceManager::Remove<sf::SoundBuffer>(const std::string& path) {
+    assert(path != "");
+
+    // We check if the resource actually exists.
+    auto it = m_SoundBufferCount.find(path);
+    if (it == m_SoundBufferCount.end()) {
+        std::cerr << "Tried to Remove an uninitialized SoundBuffer: "
+                  << path + "\n";
+        return;
+    }
+
+    // We decrement the count, and do cleanup if its 0.
+    m_SoundBufferCount[path]--;
+    if (m_SoundBufferCount[path] <= 0) {
+        m_SoundBufferToString.erase(m_SoundBufferCache[path]);  // Cleanup
+        delete m_SoundBufferCache[path];
+        m_SoundBufferCount.erase(path);
+        m_SoundBufferCache.erase(path);
+    }
+}
+
+template <>
+void Engine::ResourceManager::Remove(sf::SoundBuffer* buffer) {
+    assert(buffer && "Cannot remove a nullptr");
+
+    std::string path = GetString(buffer);
+    Remove<sf::SoundBuffer>(path);
+}
+
+template <>
+const std::string& Engine::ResourceManager::GetString(sf::SoundBuffer* buffer) {
+    assert(m_SoundBufferToString.find(buffer) != m_SoundBufferToString.end() &&
+           "There is no string associated with that ptr");
+
+    return m_SoundBufferToString[buffer];
 }
