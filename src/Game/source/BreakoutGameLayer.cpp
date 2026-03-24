@@ -2,7 +2,10 @@
 
 // Systems
 #include "Components.h"
+#include "Engine/Resources/ResourceManager.h"
 #include "Entities.h"
+#include "SFML/Audio/SoundBuffer.hpp"
+#include "Systems/AudioSystem.h"
 #include "Systems/BallLifeSystem.h"
 #include "Systems/BallTrackingSystem.h"
 #include "Systems/BoxSpawningSystem.h"
@@ -19,9 +22,24 @@
 
 BreakoutGameLayer::BreakoutGameLayer() {
     m_ECS.Init();
+    LoadAssets();
     RegisterComponents();
     RegisterSystems();
     RegisterEntities();
+}
+
+BreakoutGameLayer::~BreakoutGameLayer() {
+    UnloadAssets();
+}
+
+void BreakoutGameLayer::LoadAssets() {
+    Engine::ResourceManager::Get().Load<sf::SoundBuffer>(
+        "assets/Sounds/sqr_beep.wav");
+}
+
+void BreakoutGameLayer::UnloadAssets() {
+    Engine::ResourceManager::Get().Remove<sf::SoundBuffer>(
+        "assets/Sounds/sqr_beep.wav");
 }
 
 void BreakoutGameLayer::RegisterComponents() {
@@ -55,6 +73,7 @@ void BreakoutGameLayer::RegisterSystems() {
     Breakout::ScoreSystem::RegisterSelf(m_ECS);
     Breakout::BoxSpawningSystem::RegisterSelf(m_ECS);
     Breakout::LerpingSystem::RegisterSelf(m_ECS);
+    Breakout::AudioSystem::RegisterSelf(m_ECS);
 }
 
 void BreakoutGameLayer::RegisterEntities() {
