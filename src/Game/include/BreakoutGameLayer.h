@@ -8,15 +8,17 @@
 class BreakoutGameLayer : public Engine::Layer {
    public:
     BreakoutGameLayer();
-    ~BreakoutGameLayer() = default;
+    ~BreakoutGameLayer();
 
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
 
    private:
-    BreakoutECS m_ECS;  // <Component Count, Entity Count>
+    BreakoutECS m_ECS;
 
     void RegisterComponents();
     void RegisterSystems();
     void RegisterEntities();
+    void LoadAssets();
+    void UnloadAssets();
 };

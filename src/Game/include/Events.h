@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
+
 namespace Breakout {
 
 struct LifeGainedEvent {};
@@ -12,6 +14,10 @@ struct BoxDestroyedEvent {};
 
 struct ScoreIncreasedEvent {
     uint32_t increase;
+};
+
+struct PlaySoundEvent {
+    std::string path;
 };
 
 }  // namespace Breakout

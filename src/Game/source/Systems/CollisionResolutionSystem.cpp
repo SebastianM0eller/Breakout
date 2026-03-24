@@ -7,6 +7,7 @@
 #include "Engine/ECS/Entity.h"
 #include "Events.h"
 #include "SFML/System/Vector2.hpp"
+#include "Systems/AudioSystem.h"
 
 void Breakout::CollisionResolutionSystem::BasicBounce(
     const Engine::Entity entity, const CollisionResult& hit,
@@ -39,6 +40,8 @@ void Breakout::CollisionResolutionSystem::BasicBounce(
         // Now we flip the normal velocity, by subtracting the projection twice.
         rigidBody.velocity -= (projection) * 2.0f;
     }
+
+    system.SendEvent(PlaySoundEvent{"assets/Sounds/sqr_beep.wav"});
 }
 
 void Breakout::CollisionResolutionSystem::RegularBounce(
@@ -60,6 +63,8 @@ void Breakout::CollisionResolutionSystem::RegularBounce(
         // Now we flip the normal velocity, by subtracting the projection twice.
         rigidBody.velocity -= (projection) * 2.0f;
     }
+
+    system.SendEvent(PlaySoundEvent{"assets/Sounds/sqr_beep.wav"});
 }
 
 void Breakout::CollisionResolutionSystem::PaddleBounce(
@@ -84,6 +89,8 @@ void Breakout::CollisionResolutionSystem::PaddleBounce(
     // We reset the multiplier for the ball.
     uint32_t& multiplier = system.GetComponent<Ball>(entity).scoreIncrease;
     multiplier = 0;
+
+    system.SendEvent(PlaySoundEvent{"assets/Sounds/sqr_beep.wav"});
 }
 
 void Breakout::CollisionResolutionSystem::KillBoxBounce(
@@ -101,6 +108,8 @@ void Breakout::CollisionResolutionSystem::KillBoxBounce(
 
     ball.scoreIncrease += 5;
     ballSpeed.velocity *= ball.speedMultiplier;
+
+    system.SendEvent(PlaySoundEvent{"assets/Sounds/sqr_beep.wav"});
 }
 
 void Breakout::CollisionResolutionSystem::KillBounce(
